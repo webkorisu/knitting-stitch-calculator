@@ -1,0 +1,1519 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light only">
+<title>編み物分散増減計算 | Knitting Stitch Calculator - ✿ YUCCHI ✿</title>
+<meta name="description" content="棒針・かぎ針の分散減目・分散増目をかんたん計算。編み図イメージ付き。Knitting stitch decrease/increase calculator by YUCCHI.">
+<meta property="og:title" content="編み物分散増減計算 | Knitting Stitch Calculator - ✿ YUCCHI ✿">
+<meta property="og:description" content="棒針・かぎ針の分散減目・分散増目をかんたん計算。編み図イメージ付き。">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    color-scheme: light only;
+    /* ── ベース ── */
+    --bg:       #FBF0F2;   /* スクショのやわらかいピンクベージュ */
+    --surface:  #FFFFFF;
+    --text:     #6B5258;
+    --text-sub: #9A8A8E;
+    --border:   #EAE0E2;
+
+    /* ── 減目 = ブルー系（スクショの増目配色を逆に） ── */
+    --dec:          #8DAEBD;   /* アクティブタブ・ボタン */
+    --dec-btn:      #8DAEBD;
+    --dec-note-bg:  #DCE9EF;   /* noteエリア背景（スクショ増目のブルー note） */
+    --dec-note-bd:  #A8C8D6;
+    /* 大きい間隔：やや濃いブルー */
+    --dec-big:      #C2D9E4;
+    --dec-big-bd:   #8DAEBD;
+    /* 小さい間隔：淡いブルー */
+    --dec-sml:      #E4EFF4;
+    --dec-sml-bd:   #AECAD6;
+
+    /* ── 増目 = ピンク系（スクショの減目配色を逆に） ── */
+    --inc:          #D9939E;   /* アクティブタブ・ボタン */
+    --inc-btn:      #D9939E;
+    --inc-note-bg:  #F5DADE;   /* noteエリア背景（スクショ減目のピンク note） */
+    --inc-note-bd:  #E5AAAF;
+    /* 大きい間隔：やや濃いピンク */
+    --inc-big:      #F0CBCF;
+    --inc-big-bd:   #D9939E;
+    /* 小さい間隔：淡いピンク */
+    --inc-sml:      #FAE9EB;
+    --inc-sml-bd:   #E8B8BC;
+
+    --radius:    16px;
+    --radius-sm: 10px;
+    --shadow:    0 4px 28px rgba(130,90,100,0.10);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Zen Maru Gothic', sans-serif;
+    color: var(--text);
+    min-height: 100vh;
+    padding-bottom: 64px;
+    background-color: var(--bg);
+  }
+
+  /* ─── ヘッダー ─── */
+  header {
+    text-align: center;
+    padding: 18px 20px 20px;
+  }
+  /* h1：日本語タイトル — 主役情報としてしっかり視認 */
+  header h1 {
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: clamp(17px, 4vw, 22px);
+    font-weight: 500;
+    color: var(--text);
+    letter-spacing: .10em;
+    line-height: 1.4;
+    margin-bottom: 5px;
+  }
+  /* h2：英語タイトル — Cormorant で雰囲気重視のサブ主役 */
+  header h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(22px, 5vw, 36px);
+    font-weight: 400;
+    color: var(--text);
+    letter-spacing: .14em;
+    line-height: 1.2;
+    margin-bottom: 10px;
+  }
+  /* 説明文：少し濃く・サイズも確保して可読性向上 */
+  header .title-ja-sub {
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 15px;
+    color: var(--text);
+    letter-spacing: .06em;
+    margin-bottom: 14px;
+    font-weight: 500;
+    opacity: 0.65;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+  header .title-ja-sub::before,
+  header .title-ja-sub::after {
+    content: '';
+    display: block;
+    width: 28px;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.45;
+    flex-shrink: 0;
+  }
+  header .brand {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 14px;
+    letter-spacing: .42em;
+    color: #A07080;
+    font-weight: 400;
+    padding-top: 10px;
+  }
+
+  /* ─── タブ（pill switcher） ─── */
+  .tabs {
+    display: flex;
+    justify-content: center;
+    margin: 0 20px 0;
+    padding: 10px 0 0;
+  }
+  .tabs-inner {
+    display: flex;
+    background: rgba(255,255,255,0.75);
+    border: 1.5px solid var(--border);
+    border-radius: 999px;
+    padding: 4px;
+    gap: 2px;
+    box-shadow: 0 2px 10px rgba(130,90,100,0.07);
+  }
+  .tab-btn {
+    padding: 10px 28px;
+    border: none;
+    background: transparent;
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-sub);
+    cursor: pointer;
+    letter-spacing: .04em;
+    border-radius: 999px;
+    transition: color .2s, background .2s, box-shadow .2s;
+    white-space: nowrap;
+  }
+  .tab-btn.active-dec {
+    background: var(--dec);
+    color: #fff;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(141,174,189,0.35);
+  }
+  .tab-btn.active-inc {
+    background: var(--inc);
+    color: #fff;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(217,147,158,0.35);
+  }
+  .panel-wrap {
+    margin: 16px 20px 0;
+    background: var(--surface);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 28px 22px;
+  }
+
+  /* ─── パネル ─── */
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* note：角丸・色背景（スクショ風） */
+  .note {
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 13px;
+    color: var(--text);
+    background: var(--dec-note-bg);
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 14px 18px;
+    margin-bottom: 26px;
+    line-height: 2.0;
+  }
+  .note.mint-note {
+    background: var(--inc-note-bg);
+  }
+  /* ドラッグ説明文 */
+  .note-tip {
+    display: block;
+    margin-top: 6px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(107,82,88,0.12);
+    font-size: 11px;
+    color: var(--text-sub);
+    letter-spacing: .04em;
+    line-height: 1.7;
+  }
+
+  /* フォーム */
+  .field { margin-bottom: 20px; }
+  .field label {
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 8px;
+    letter-spacing: .03em;
+  }
+  .field input[type="number"] {
+    width: 100%;
+    max-width: 220px;
+    padding: 12px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 15px;
+    color: var(--text);
+    background: var(--surface);
+    outline: none;
+    transition: border-color .2s, box-shadow .2s;
+    -webkit-appearance: none;
+  }
+  .field input[type="number"]:focus {
+    border-color: var(--dec);
+    box-shadow: 0 0 0 3px rgba(141,174,189,0.16);
+  }
+  .field.mint-field input[type="number"]:focus {
+    border-color: var(--inc);
+    box-shadow: 0 0 0 3px rgba(217,147,158,0.16);
+  }
+
+  /* ボタン：スクショのpill型 */
+  .calc-btn {
+    display: block;
+    width: 100%;
+    max-width: 100%;        /* スマホ：入力欄と揃えて全幅 */
+    padding: 15px 32px;
+    border: none;
+    border-radius: 999px;
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: .06em;
+    cursor: pointer;
+    transition: transform .15s, opacity .2s;
+    margin-top: 8px;
+    color: #fff;
+  }
+  .calc-btn:active { transform: scale(.97); }
+  .calc-btn-dec {
+    background: var(--dec-btn);
+    box-shadow: 0 4px 16px rgba(141,174,189,0.38);
+  }
+  .calc-btn-dec:hover { opacity: .88; }
+  .calc-btn-inc {
+    background: var(--inc-btn);
+    box-shadow: 0 4px 16px rgba(217,147,158,0.38);
+  }
+  .calc-btn-inc:hover { opacity: .88; }
+
+  .error {
+    font-size: 12px;
+    color: #b05070;
+    background: #fceef2;
+    border-radius: var(--radius-sm);
+    padding: 8px 12px;
+    margin-top: 10px;
+    display: none;
+  }
+
+  .result-area { margin-top: 26px; display: none; }
+  .result-area.visible { display: block; }
+
+  /* セクション区切り */
+  .sec-div {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 26px 0 14px;
+  }
+  .sec-div span {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-sub);
+    white-space: nowrap;
+    letter-spacing: .10em;
+    text-transform: uppercase;
+  }
+  .sec-div::before, .sec-div::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* サマリーカード */
+  .summary-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+  .sum-card {
+    flex: 1; min-width: 110px;
+    border-radius: var(--radius-sm);
+    padding: 14px;
+    text-align: center;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+  }
+  /* 減目カード：ブルー系 */
+  .sum-card.lav  { background: var(--dec-sml); border-color: var(--dec-sml-bd); }
+  .sum-card.pink { background: var(--dec-big); border-color: var(--dec-big-bd); }
+  /* 増目カード：ピンク系 */
+  .sum-card.mint { background: var(--inc-sml); border-color: var(--inc-sml-bd); }
+  .sum-card.yel  { background: var(--inc-big); border-color: var(--inc-big-bd); }
+  .sum-card h4 { font-size: 10px; color: var(--text-sub); margin-bottom: 6px; font-weight: 700; letter-spacing: .06em; }
+  .sum-card .sv { font-size: clamp(18px, 4vw, 22px); font-weight: 700; color: var(--text); }
+
+  /* 説明文 */
+  .div-explain {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 2.1;
+    background: var(--dec-sml);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    margin-bottom: 4px;
+  }
+  .div-explain strong { color: var(--dec); }
+  .div-explain.mint-ex { background: var(--inc-sml); }
+  .div-explain.mint-ex strong { color: var(--inc); }
+
+  /* how-cards */
+  .how-cards { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+  .how-card {
+    flex: 1; min-width: 110px;
+    border-radius: var(--radius-sm);
+    padding: 14px 10px;
+    text-align: center;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+  }
+  /* 減目：大きい間隔は濃いブルー、小さい間隔は淡いブルー */
+  .how-card.cA  { background: var(--dec-big); border-color: var(--dec-big-bd); }
+  .how-card.cB  { background: var(--dec-sml); border-color: var(--dec-sml-bd); }
+  .how-card.cN  { background: #f5f5f5; border-color: var(--border); }
+  /* 増目：大きい間隔は濃いピンク、小さい間隔は淡いピンク */
+  .how-card.cAi { background: var(--inc-big); border-color: var(--inc-big-bd); }
+  .how-card.cBi { background: var(--inc-sml); border-color: var(--inc-sml-bd); }
+  .how-card.cNi { background: #f5f5f5; border-color: var(--border); }
+  .how-card .cn { font-size: clamp(14px,4vw,18px); font-weight: 700; color: var(--text); line-height: 1.3; }
+  .how-card .cs { font-size: 11px; color: var(--text-sub); margin-top: 3px; line-height: 1.5; }
+  .how-card .ct { font-size: 13px; font-weight: 700; margin-top: 8px; color: var(--text); }
+
+  /* ドラッグ説明（ブロック下） */
+  .drag-hint {
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 11px;
+    color: var(--text-sub);
+    letter-spacing: .03em;
+    margin-top: 8px;
+    opacity: 0.75;
+  }
+
+  /* 図表 */
+  .figure-wrap {
+    background: var(--surface);
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--border);
+    padding: 95px 12px 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
+  .figure-wrap-label {
+    position: absolute;
+    top: 8px;
+    left: 10px;
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--text-sub);
+    letter-spacing: .08em;
+    opacity: 0.6;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .fig-status-badge {
+    font-size: 9px;
+    font-weight: 700;
+    border-radius: 999px;
+    padding: 1px 6px;
+    letter-spacing: .02em;
+    opacity: 1;
+  }
+  .fig-equal-dec {
+    color: #8DAEBD;
+    background: #E4EFF4;
+    border: 1px solid #8DAEBD;
+  }
+  .fig-equal-inc {
+    color: #D9939E;
+    background: #FAE9EB;
+    border: 1px solid #D9939E;
+  }
+  .fig-custom {
+    color: #A07080;
+    background: #F5E8EC;
+    border: 1px solid #E0B8C4;
+  }
+
+  /* ─── 確認モーダル ─── */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(107,82,88,0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 20px;
+  }
+  .modal-box {
+    background: var(--surface);
+    border-radius: var(--radius);
+    box-shadow: 0 8px 32px rgba(107,82,88,0.18);
+    padding: 28px 24px 22px;
+    max-width: 320px;
+    width: 100%;
+    text-align: center;
+  }
+  .modal-title {
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 10px;
+    letter-spacing: .04em;
+  }
+  .modal-body {
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 13px;
+    color: var(--text-sub);
+    line-height: 1.8;
+    margin-bottom: 22px;
+  }
+  .modal-btns {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+  }
+  .modal-btn-cancel {
+    flex: 1;
+    padding: 10px;
+    border-radius: 999px;
+    border: 1.5px solid var(--border);
+    background: var(--surface);
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-sub);
+    cursor: pointer;
+  }
+  .modal-btn-ok {
+    flex: 1;
+    padding: 10px;
+    border-radius: 999px;
+    border: none;
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+    cursor: pointer;
+  }
+  .modal-btn-ok-dec { background: var(--dec); }
+  .modal-btn-ok-inc { background: var(--inc); }
+  .figure-wrap-header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+  .figure-wrap-title {
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-sub);
+    letter-spacing: .08em;
+    white-space: nowrap;
+    opacity: 0.8;
+  }
+  .figure-legend {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    font-size: 11px; color: var(--text-sub);
+  }
+  .figure-legend span { display: flex; align-items: center; gap: 4px; }
+  .leg-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+  .figure-scroll {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    overflow: hidden;
+    padding: 0;
+    flex: 1;
+  }
+  svg.sf { display: block; margin: auto; max-width: 100%; }
+
+  /* カスタム配置バッジ */
+  .custom-badge {
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    color: #A07080;
+    background: #F5E8EC;
+    border: 1.5px solid #E0B8C4;
+    border-radius: 999px;
+    padding: 3px 10px;
+    letter-spacing: .03em;
+  }
+
+  /* ブロックUI */
+  .block-area { display: flex; flex-direction: column; gap: 0; padding: 0; margin-bottom: 4px; }
+  .block-area-wrap {
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 48px 16px 24px;
+    position: relative;
+    margin-bottom: 4px;
+  }
+  .block-area-label {
+    position: absolute;
+    top: 10px;
+    left: 12px;
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--text-sub);
+    letter-spacing: .08em;
+    opacity: 0.6;
+    line-height: 1.6;
+  }
+  .block-area-btns { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; justify-content: center; }
+  .block-area-blocks { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: center; }
+  .block-area-blocks.rtl { flex-direction: row-reverse; }
+
+  .blk {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    border-radius: var(--radius-sm);
+    padding: 6px 8px;
+    cursor: grab;
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 12px; font-weight: 700;
+    color: var(--text);
+    border: 1.5px solid transparent;
+    transition: transform .15s, box-shadow .15s;
+    user-select: none; touch-action: none;
+    min-width: 52px; text-align: center; line-height: 1.4;
+  }
+  .blk:active { cursor: grabbing; }
+  .blk.dragging { opacity: 0.4; transform: scale(.95); }
+  .blk.drag-over { transform: scale(1.05); box-shadow: 0 4px 12px rgba(141,174,189,.25); border-color: var(--dec); }
+  /* 減目ブロック */
+  .blk-big-dec  { background: var(--dec-big); border-color: var(--dec-big-bd); }
+  .blk-sml-dec  { background: var(--dec-sml); border-color: var(--dec-sml-bd); }
+  .blk-none-dec { background: #f0f0f0; border-color: #ddd; }
+  /* 増目ブロック */
+  .blk-big-inc  { background: var(--inc-big); border-color: var(--inc-big-bd); }
+  .blk-sml-inc  { background: var(--inc-sml); border-color: var(--inc-sml-bd); }
+  .blk-none-inc { background: #f0f0f0; border-color: #ddd; }
+  .blk-num   { font-size: 15px; font-weight: 700; }
+  .blk-label { font-size: 10px; color: var(--text-sub); margin-top: 1px; }
+
+  /* チェックリスト */
+  .checklist-wrap { margin-bottom: 4px; }
+  .checklist-progress { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .checklist-progress-bar-bg { flex: 1; height: 5px; border-radius: 99px; background: var(--border); overflow: hidden; }
+  .checklist-progress-bar { height: 100%; border-radius: 99px; background: var(--dec); transition: width 0.4s cubic-bezier(.4,0,.2,1); width: 0%; }
+  .checklist-progress-bar.mint-bar { background: var(--inc); }
+  .checklist-progress-label { font-size: 11px; font-weight: 700; color: var(--text-sub); white-space: nowrap; min-width: 36px; text-align: right; }
+  .checklist-reset {
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 11px; padding: 3px 10px;
+    border-radius: 999px;
+    border: 1.5px solid var(--border);
+    background: var(--surface);
+    color: var(--text-sub); cursor: pointer;
+    transition: background .15s;
+  }
+  .checklist-reset:hover { background: #f5f0f1; }
+
+  .checklist-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 14px; border-radius: var(--radius-sm);
+    margin-bottom: 6px; cursor: pointer;
+    border: 1.5px solid transparent;
+    transition: background .2s, opacity .2s, transform .15s;
+    user-select: none;
+  }
+  .checklist-item:active { transform: scale(.98); }
+  /* 減目チェック */
+  .checklist-item.ci-big-dec  { background: var(--dec-big); border-color: var(--dec-big-bd); }
+  .checklist-item.ci-sml-dec  { background: var(--dec-sml); border-color: var(--dec-sml-bd); }
+  .checklist-item.ci-none-dec { background: #f8f8f8; border-color: var(--border); }
+  /* 増目チェック */
+  .checklist-item.ci-big-inc  { background: var(--inc-big); border-color: var(--inc-big-bd); }
+  .checklist-item.ci-sml-inc  { background: var(--inc-sml); border-color: var(--inc-sml-bd); }
+  .checklist-item.ci-none-inc { background: #f8f8f8; border-color: var(--border); }
+  .checklist-item.done { opacity: 0.40; background: #f0f0f0 !important; border-color: #e0e0e0 !important; }
+  .checklist-item.done .ci-text { text-decoration: line-through; color: var(--text-sub); }
+  .checklist-item.locked { opacity: 0.35; cursor: not-allowed; }
+  .checklist-item.current { box-shadow: 0 0 0 2.5px rgba(141,174,189,0.40); }
+  .checklist-item.current.mint-current { box-shadow: 0 0 0 2.5px rgba(217,147,158,0.40); }
+
+  .ci-checkbox {
+    width: 20px; height: 20px; border-radius: 5px; flex-shrink: 0;
+    border: 1.5px solid var(--border); background: var(--surface);
+    display: flex; align-items: center; justify-content: center;
+    transition: background .2s, border-color .2s; font-size: 11px;
+  }
+  .checklist-item.done .ci-checkbox { background: #aaa; border-color: #aaa; color: white; }
+  .checklist-item.ci-big-dec .ci-checkbox,
+  .checklist-item.ci-sml-dec .ci-checkbox { border-color: var(--dec); }
+  .checklist-item.ci-big-inc .ci-checkbox,
+  .checklist-item.ci-sml-inc .ci-checkbox { border-color: var(--inc); }
+
+  .ci-dot  { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .ci-text { flex: 1; font-size: 12px; font-weight: 500; color: var(--text); line-height: 1.5; transition: color .2s; }
+  .ci-count { font-size: 11px; font-weight: 700; color: var(--text-sub); white-space: nowrap; }
+
+  @media(min-width:500px){
+    .panel-wrap { padding: 32px 28px; margin-left: 24px; margin-right: 24px; }
+  }
+  @media(min-width:680px){
+    .panel-wrap { margin-left: auto; margin-right: auto; max-width: 640px; }
+    .tabs { max-width: 640px; margin-left: auto; margin-right: auto; }
+    header { padding: 36px 20px 20px; }
+    /* PC：ボタン幅を入力欄（220px）に揃えてすっきり */
+    .calc-btn { max-width: 220px; }
+  }
+
+  /* ── ダークモード強制無効化 ── */
+  @media (prefers-color-scheme: dark) {
+    html { background: #FBF0F2 !important; }
+    body { background-color: #FBF0F2 !important; color: #6B5258 !important; }
+  }
+
+  /* ─── データ注意書き（ヘッダー内） ─── */
+  header .data-hint {
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 10px;
+    color: var(--text-sub);
+    opacity: 0.85;
+    letter-spacing: .04em;
+    margin-top: 10px;
+    line-height: 1.7;
+    text-align: center;
+    padding: 0 16px;
+  }
+
+  /* ─── データ注意書きアコーディオン（最下部） ─── */
+  .data-note {
+    width: 100%;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    border: 1.5px solid var(--border);
+    background: var(--surface);
+    margin-bottom: 40px;
+  }
+  .data-note-btn {
+    width: 100%;
+    background: none;
+    border: none;
+    padding: 11px 16px;
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-sub);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    letter-spacing: .06em;
+    transition: background .15s;
+  }
+  .data-note-btn:hover { background: #faf5f6; }
+  .data-note-arrow {
+    font-size: 10px;
+    transition: transform .25s ease;
+    display: inline-block;
+    color: var(--text-sub);
+    opacity: 0.6;
+  }
+  .data-note.open .data-note-arrow { transform: rotate(180deg); }
+  .data-note-body {
+    display: none;
+    padding: 12px 16px 14px;
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 11px;
+    color: var(--text-sub);
+    line-height: 2.0;
+    border-top: 1px solid var(--border);
+  }
+  .data-note.open .data-note-body { display: block; }
+  .data-note-body p { margin-bottom: 6px; }
+  .data-note-body p:last-child { margin-bottom: 0; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>編み物分散増減計算</h1>
+  <h2>Knitting Stitch Calculator</h2>
+  <div class="title-ja-sub">分散減目・分散増目をかんたん計算</div>
+  <div class="brand">✿ YUCCHI ✿</div>
+  <div class="data-hint">
+    データはこの端末に保存されます<br>
+    詳細は ✿ データについて をご確認ください
+  </div>
+</header>
+
+<div class="tabs">
+  <div class="tabs-inner">
+    <button class="tab-btn active-dec" onclick="switchTab('dec')">分散減目</button>
+    <button class="tab-btn" onclick="switchTab('inc')">分散増目</button>
+  </div>
+</div>
+
+<div class="panel-wrap">
+  <!-- 減目パネル -->
+  <div id="panel-dec" class="panel active">
+    <div class="note">分散減目とは、目を均等に減らす方法です。<br>こちらのツールでは元々の目数を減らす目数＋１で分割して計算しています。</div>
+    <div class="field"><label>元々の目数</label><input type="number" id="dec-from" min="1" max="999" placeholder="例: 12" inputmode="numeric" onblur="if(this.value>999)this.value=999;if(this.value<1&&this.value!='')this.value=1;"></div>
+    <div class="field"><label>減らした後の目数</label><input type="number" id="dec-to" min="1" max="998" placeholder="例: 8" inputmode="numeric" onblur="if(this.value>998)this.value=998;if(this.value<1&&this.value!='')this.value=1;"></div>
+    <button class="calc-btn calc-btn-dec" onclick="calcDec()">計算する</button>
+    <div class="error" id="dec-error"></div>
+    <div class="result-area" id="dec-result">
+      <div class="sec-div"><span>何目減らす？ 何分割？</span></div>
+      <div class="summary-row">
+        <div class="sum-card lav"><h4>何目減らすか</h4><div class="sv" id="dec-diff-sv"></div></div>
+        <div class="sum-card pink"><h4>何分割するか</h4><div class="sv" id="dec-divn-sv"></div></div>
+      </div>
+      <div class="sec-div"><span>計算してみると…</span></div>
+      <div class="div-explain" id="dec-explain"></div>
+      <div class="sec-div"><span>どう割り振れば良いか</span></div>
+      <div class="how-cards" id="dec-cards"></div>
+      <div class="sec-div"><span>目の配置イメージ</span></div>
+      <div id="dec-block-area" class="block-area"></div>
+      <div class="figure-wrap" style="margin-top:10px;">
+        <div class="figure-wrap-label">配置イメージ</div>
+        <div class="figure-scroll"><svg id="dec-svg" class="sf"></svg></div>
+      </div>
+      <div class="sec-div" style="margin-top:24px;"><span>編み進め チェックリスト</span></div>
+      <div id="dec-checklist" class="checklist-wrap"></div>
+    </div>
+  </div>
+
+  <!-- 増目パネル -->
+  <div id="panel-inc" class="panel">
+    <div class="note mint-note">分散増目とは、目を均等に増やす方法です。<br>こちらのツールでは元々の目数を増やす目数＋１で分割して計算しています。</div>
+    <div class="field mint-field"><label>元々の目数</label><input type="number" id="inc-from" min="1" max="998" placeholder="例: 8" inputmode="numeric" onblur="if(this.value>998)this.value=998;if(this.value<1&&this.value!='')this.value=1;"></div>
+    <div class="field mint-field"><label>増やした後の目数</label><input type="number" id="inc-to" min="1" max="999" placeholder="例: 12" inputmode="numeric" onblur="if(this.value>999)this.value=999;if(this.value<1&&this.value!='')this.value=1;"></div>
+    <button class="calc-btn calc-btn-inc" onclick="calcInc()">計算する</button>
+    <div class="error" id="inc-error"></div>
+    <div class="result-area" id="inc-result">
+      <div class="sec-div m"><span>何目増やす？ 何分割？</span></div>
+      <div class="summary-row">
+        <div class="sum-card mint"><h4>何目増やすか</h4><div class="sv" id="inc-diff-sv"></div></div>
+        <div class="sum-card yel"><h4>何分割するか</h4><div class="sv" id="inc-divn-sv"></div></div>
+      </div>
+      <div class="sec-div m"><span>計算してみると…</span></div>
+      <div class="div-explain mint-ex" id="inc-explain"></div>
+      <div class="sec-div m"><span>どう割り振れば良いか</span></div>
+      <div class="how-cards" id="inc-cards"></div>
+      <div class="sec-div m"><span>目の配置イメージ</span></div>
+      <div id="inc-block-area" class="block-area"></div>
+      <div class="figure-wrap m" style="margin-top:10px;">
+        <div class="figure-wrap-label">配置イメージ</div>
+        <div class="figure-scroll"><svg id="inc-svg" class="sf"></svg></div>
+      </div>
+      <div class="sec-div m" style="margin-top:24px;"><span>編み進め チェックリスト</span></div>
+      <div id="inc-checklist" class="checklist-wrap"></div>
+    </div>
+  </div>
+</div>
+
+<div style="margin: 24px 20px 0; max-width: 640px; margin-left: auto; margin-right: auto; padding: 0 20px;">
+  <div class="data-note" id="dataNote">
+    <button class="data-note-btn" onclick="toggleDataNote()">
+      <span>✿ データについて</span>
+      <span class="data-note-arrow">▼</span>
+    </button>
+    <div class="data-note-body">
+      <p>データはこの端末のブラウザに保存されます。<br>スマホとPCなど、端末が異なると記録は共有されません。</p>
+      <p>ブラウザの「履歴を消去」や「キャッシュ削除」を行うと、保存されたデータが消える場合があります。大切な記録はメモなどに控えておくと安心です。</p>
+    </div>
+  </div>
+</div>
+
+<div id="modal-overlay" class="modal-overlay" style="display:none;" onclick="closeModal()">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-title" id="modal-title">均等配置に戻しますか？</div>
+    <div class="modal-body" id="modal-body">カスタム配置の並び順はリセットされます。</div>
+    <div class="modal-btns">
+      <button class="modal-btn-cancel" onclick="closeModal()">キャンセル</button>
+      <button class="modal-btn-ok" id="modal-ok-btn" onclick="confirmReset()">リセット</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ─── モーダル ─── */
+let _pendingReset=null;
+function showResetModal(prefix,mode){
+  _pendingReset={prefix,mode};
+  const isInc=_state[prefix].isInc;
+  const okBtn=document.getElementById('modal-ok-btn');
+  okBtn.className='modal-btn-ok '+(isInc?'modal-btn-ok-inc':'modal-btn-ok-dec');
+  document.getElementById('modal-title').textContent='均等配置に戻しますか？';
+  document.getElementById('modal-body').textContent='';
+  document.getElementById('modal-overlay').style.display='flex';
+}
+function closeModal(){
+  document.getElementById('modal-overlay').style.display='none';
+  _pendingReset=null;
+}
+function confirmReset(){
+  if(!_pendingReset)return;
+  const{prefix,mode}=_pendingReset;
+  const st=_state[prefix];
+  if(mode==='eq'){
+    st.ordered=JSON.parse(JSON.stringify(st._origOrdered));
+    st._isCustom=false;
+    _renderBlocks(prefix);_redraw(prefix);renderChecklist(prefix,st.isInc);
+  } else {
+    if(st.isInc){
+      const allB=[...st._origOrdered];
+      allB.sort((a,b)=>a.size-b.size);
+      st.ordered=allB;
+    } else {
+      const noneBlock={size:st.noneLen,gi:2};
+      const opBlocks=st._origOrdered.filter(b=>b.gi!==2);
+      const allB=[...opBlocks,noneBlock];
+      allB.sort((a,b)=>{const sa=a.gi===2?0:a.size;const sb=b.gi===2?0:b.size;return sa-sb;});
+      st.ordered=allB;
+    }
+    st._isCustom=false;_renderBlocks(prefix);
+    const svgEl=document.getElementById(prefix+'-svg');if(svgEl)svgEl.innerHTML='';
+    const figWrap=document.getElementById(prefix+'-svg')?.closest('.figure-wrap');
+    const lbl=figWrap?figWrap.querySelector('.figure-wrap-label'):null;
+    if(lbl)lbl.innerHTML='配置イメージ';
+  }
+  saveState(prefix);
+  closeModal();
+}
+
+/* ─── localStorage 保存・復元 ─── */
+function saveState(prefix){
+  const st=_state[prefix];
+  if(!st)return;
+  try{
+    localStorage.setItem('yucchi_'+prefix,JSON.stringify({
+      from:st.from,diff:st.diff,q:st.q,r:st.r,isInc:st.isInc,
+      noneLen:st.noneLen,ordered:st.ordered,_isCustom:!!st._isCustom
+    }));
+  }catch(e){}
+}
+
+
+function toggleDataNote(){
+  document.getElementById('dataNote').classList.toggle('open');
+}
+function switchTab(t){
+  ['dec','inc'].forEach(id=>document.getElementById('panel-'+id).classList.toggle('active',id===t));
+  document.querySelectorAll('.tab-btn')[0].className='tab-btn'+(t==='dec'?' active-dec':'');
+  document.querySelectorAll('.tab-btn')[1].className='tab-btn'+(t==='inc'?' active-inc':'');
+}
+function showErr(el,msg){el.textContent=msg;el.style.display='block';}
+
+function calcDec(){
+  const from=parseInt(document.getElementById('dec-from').value);
+  const to  =parseInt(document.getElementById('dec-to').value);
+  const err=document.getElementById('dec-error');
+  const res=document.getElementById('dec-result');
+  err.style.display='none'; res.classList.remove('visible');
+  if(!from||!to||isNaN(from)||isNaN(to)){showErr(err,'数字を入力してください。');return;}
+  if(to>=from){showErr(err,'減らした後の目数は元々の目数より少なくしてください。');return;}
+  if(from<2){showErr(err,'元々の目数は2以上にしてください。');return;}
+  const diff=from-to,divN=diff+1,q=Math.floor(from/divN),r=from%divN;
+  document.getElementById('dec-diff-sv').textContent=diff+'目';
+  document.getElementById('dec-divn-sv').textContent=divN+'分割';
+  renderExplain('dec-explain',from,divN,q,r,'減らす',false);
+  renderCards('dec-cards',q,r,diff,divN,from,'減らす',false);
+  renderBlockArea('dec-block-area',null,from,diff,q,r,false);
+  res.classList.add('visible');
+  renderChecklist('dec',false);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    const seq=_seqFromOrdered(_state['dec']._origOrdered,false);
+    drawFig('dec-svg',seq,false,_checkedGidSet('dec'),to);
+    const lbl=document.querySelector('#dec-svg')?.closest('.figure-wrap')?.querySelector('.figure-wrap-label');
+    if(lbl)lbl.innerHTML=`配置イメージ <span class="fig-status-badge fig-equal-dec">均等</span>`;
+  }));
+}
+
+function calcInc(){
+  const from=parseInt(document.getElementById('inc-from').value);
+  const to  =parseInt(document.getElementById('inc-to').value);
+  const err=document.getElementById('inc-error');
+  const res=document.getElementById('inc-result');
+  err.style.display='none'; res.classList.remove('visible');
+  if(!from||!to||isNaN(from)||isNaN(to)){showErr(err,'数字を入力してください。');return;}
+  if(to<=from){showErr(err,'増やした後の目数は元々の目数より多くしてください。');return;}
+  if(from<2){showErr(err,'元々の目数は2以上にしてください。');return;}
+  const diff=to-from,divN=diff+1;
+  /* 元の目数（from）を分割 */
+  const q=Math.floor(from/divN),r=from%divN;
+  document.getElementById('inc-diff-sv').textContent=diff+'目';
+  document.getElementById('inc-divn-sv').textContent=divN+'分割';
+  renderExplain('inc-explain',from,divN,q,r,'増やす',true);
+  renderCards('inc-cards',q,r,diff,divN,from,'増やす',true);
+  renderBlockArea('inc-block-area',null,from,diff,q,r,true);
+  res.classList.add('visible');
+  renderChecklist('inc',true);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    const seq=_seqFromOrdered(_state['inc']._origOrdered,true);
+    drawFig('inc-svg',seq,true,_checkedGidSet('inc'),to);
+    const lbl=document.querySelector('#inc-svg')?.closest('.figure-wrap')?.querySelector('.figure-wrap-label');
+    if(lbl)lbl.innerHTML=`配置イメージ <span class="fig-status-badge fig-equal-inc">均等</span>`;
+  }));
+}
+
+function renderExplain(id,from,divN,q,r,verb,isInc){
+  const diff=divN-1,noneVerb=isInc?'増目なし':'減目なし';
+  let html=`<strong>${from}目</strong> を <strong>${divN}分割</strong> すると<br>1分割あたり <strong>${q}目</strong>、余り <strong>${r}目</strong><br><br>`;
+  if(r===0){
+    /* 余りなし：全区間がq目 */
+    html+=`<strong>${q}目</strong> の区間が <strong>${divN}回</strong><br>`;
+    if(diff>0) html+=`&nbsp;&nbsp;→ 1目${verb}を <strong>${diff}回</strong><br>`;
+    html+=`&nbsp;&nbsp;→ ${noneVerb}を <strong>1回</strong>`;
+  } else if(!isInc){
+    /* 減目：大きい間隔（q+1目）→ 小さい間隔（q目）の順 */
+    html+=`<strong>${q+1}目</strong>（1目多い）の区間が <strong>${r}回</strong><br>&nbsp;&nbsp;→ 1目${verb}を <strong>${r}回</strong><br><br>`;
+    html+=`<strong>${q}目</strong> の区間が <strong>${diff-r+1}回</strong><br>`;
+    if(diff-r>0) html+=`&nbsp;&nbsp;→ 1目${verb}を <strong>${diff-r}回</strong><br>`;
+    html+=`&nbsp;&nbsp;→ ${noneVerb}を <strong>1回</strong>`;
+  } else {
+    /* 増目：小さい区間(q目)×(divN-r)回→全部増やす、大きい区間(q+1目)×r回→一部増やす＋増目なし */
+    const smallCount=divN-r;   /* 小さい区間の数 */
+    const bigCount=r;           /* 大きい区間の数 */
+    const bigInc=diff-smallCount; /* 大きい区間で増やす回数 */
+    const bigNone=bigCount-bigInc; /* 大きい区間で増目なしの回数 */
+    html+=`<strong>${q}目</strong> の区間が <strong>${smallCount}回</strong><br>`;
+    html+=`&nbsp;&nbsp;→ 1目${verb}を <strong>${smallCount}回</strong><br><br>`;
+    html+=`<strong>${q+1}目</strong>（1目多い）の区間が <strong>${bigCount}回</strong><br>`;
+    if(bigInc>0) html+=`&nbsp;&nbsp;→ 1目${verb}を <strong>${bigInc}回</strong><br>`;
+    if(bigNone>0) html+=`&nbsp;&nbsp;→ ${noneVerb}を <strong>${bigNone}回</strong>`;
+  }
+  document.getElementById(id).innerHTML=html;
+}
+
+function renderCards(cardId,q,r,diff,divN,from,verb,isInc){
+  const el=document.getElementById(cardId); el.innerHTML='';
+  if(r===0){
+    const noneLen=from-(q*diff);
+    el.appendChild(makeCard(q+'目ごとに','1目'+verb,diff+'回',null,isInc?'cAi':'cA'));
+    el.appendChild(makeCard(noneLen+'目 '+(isInc?'増目なし':'減目なし'),'操作なし','1回',null,isInc?'cNi':'cN'));
+  } else if(!isInc){
+    /* 減目：大きい間隔 → 小さい間隔 → 減目なし */
+    const noneLen=from-((q+1)*r+q*(diff-r));
+    el.appendChild(makeCard((q+1)+'目ごとに','1目'+verb,r+'回',null,'cA'));
+    if(diff-r>0) el.appendChild(makeCard(q+'目ごとに','1目'+verb,(diff-r)+'回',null,'cB'));
+    el.appendChild(makeCard(noneLen+'目 減目なし','操作なし','1回',null,'cN'));
+  } else {
+    /* 増目：小さい区間全部増やす → 大きい区間は一部増やす＋増目なし */
+    const smallCount=divN-r;
+    const bigCount=r;
+    const bigInc=diff-smallCount;
+    const bigNone=bigCount-bigInc;
+    el.appendChild(makeCard(q+'目ごとに','1目'+verb,smallCount+'回',null,'cBi'));
+    if(bigInc>0) el.appendChild(makeCard((q+1)+'目ごとに','1目'+verb,bigInc+'回',null,'cAi'));
+    if(bigNone>0) el.appendChild(makeCard((q+1)+'目 増目なし','操作なし',bigNone+'回',null,'cNi'));
+  }
+}
+function makeCard(interval,action,times,sub2,cls){
+  const d=document.createElement('div'); d.className='how-card '+cls;
+  d.innerHTML='<div class="cn">'+interval+'</div><div class="cs">'+action+'</div>'+(sub2?'<div class="cs" style="margin-top:2px;font-weight:700;">'+sub2+'</div>':'')+'<div class="ct">× '+times+'</div>';
+  return d;
+}
+
+const _state={dec:{},inc:{}};
+
+function buildOrderedGroups(diff,q,r){
+  const big=r,small=diff-r;
+  if(small===0){const o=[];for(let i=0;i<big;i++)o.push({size:q+1,gi:0});return o;}
+  if(big===0){const o=[];for(let i=0;i<small;i++)o.push({size:q,gi:1});return o;}
+  const n=small+1,base=Math.floor(big/n),extra=big%n;
+  const slots=[];let acc=0;
+  for(let i=0;i<n;i++){acc+=extra;if(acc>=n){slots.push(base+1);acc-=n;}else{slots.push(base);}}
+  slots.reverse();
+  const ordered=[];
+  slots.forEach((s,i)=>{for(let j=0;j<s;j++)ordered.push({size:q+1,gi:0});if(i<small)ordered.push({size:q,gi:1});});
+  return ordered;
+}
+
+function buildOrderedGroupsInc(diff,q,r,divN){
+  const groups=[];
+  if(r===0){
+    /* 余りなし：全区間がq目、diff回増やして1回増目なし */
+    for(let i=0;i<diff;i++) groups.push({size:q,gi:0});
+    groups.push({size:q,gi:2}); /* 増目なしを末尾（左端）に固定 */
+  } else {
+    const smallCount=divN-r;
+    const bigInc=diff-smallCount;
+    const bigNone=r-bigInc;
+    /* 増目あり区間を均等散らし */
+    if(smallCount===0){
+      for(let i=0;i<bigInc;i++) groups.push({size:q+1,gi:0});
+    } else if(bigInc===0){
+      for(let i=0;i<smallCount;i++) groups.push({size:q,gi:1});
+    } else {
+      const n=smallCount+1,base=Math.floor(bigInc/n),extra=bigInc%n;
+      const slots=[];let acc=0;
+      for(let i=0;i<n;i++){acc+=extra;if(acc>=n){slots.push(base+1);acc-=n;}else{slots.push(base);}}
+      slots.reverse();
+      slots.forEach((s,i)=>{
+        for(let j=0;j<s;j++) groups.push({size:q+1,gi:0});
+        if(i<smallCount) groups.push({size:q,gi:1});
+      });
+    }
+    /* 増目なしは末尾（RTL表示で左端=編み終わり側）に固定 */
+    for(let i=0;i<bigNone;i++) groups.push({size:q+1,gi:2});
+  }
+  return groups;
+}
+
+function renderBlockArea(areaId,_unused,from,diff,q,r,isInc){
+  const prefix=areaId.startsWith('dec')?'dec':'inc';
+  let origOrdered;
+  if(isInc){
+    const divN=diff+1;
+    origOrdered=buildOrderedGroupsInc(diff,q,r,divN);
+    const noneLen=0; /* 増目は増目なし区間がgi=2として含まれるので別管理不要 */
+    const ordered=JSON.parse(JSON.stringify(origOrdered));
+    _state[prefix]={from,diff,q,r,isInc,noneLen,ordered,_origOrdered:JSON.parse(JSON.stringify(origOrdered))};
+  } else {
+    const usedStitches=(q+1)*r+q*(diff-r),noneLen=from-usedStitches;
+    const opGroups=buildOrderedGroups(diff,q,r);
+    origOrdered=[...opGroups,{size:noneLen,gi:2}];
+    const ordered=JSON.parse(JSON.stringify(origOrdered));
+    _state[prefix]={from,diff,q,r,isInc,noneLen,ordered,_origOrdered:JSON.parse(JSON.stringify(origOrdered))};
+  }
+  _renderBlocks(prefix);
+}
+
+function _renderBlocks(prefix){
+  const st=_state[prefix];
+  const area=document.getElementById(prefix+'-block-area');
+  area.innerHTML='';
+  const isInc=st.isInc;
+  const bigCls=isInc?'blk-big-inc':'blk-big-dec';
+  const smlCls=isInc?'blk-sml-inc':'blk-sml-dec';
+  const noneCls=isInc?'blk-none-inc':'blk-none-dec';
+  const verb=isInc?'増':'減';
+
+  /* フラグで管理（ドラッグ時のみtrue） */
+  const isCustom=!!st._isCustom;
+
+  const btnRow=document.createElement('div'); btnRow.className='block-area-btns';
+  const eqBtn=document.createElement('button');
+  eqBtn.textContent='均等配置';
+  const eqC=isInc?'#D9939E':'#8DAEBD';
+  const eqBg=isInc?'#FAE9EB':'#E4EFF4';
+  eqBtn.style.cssText=`font-family:'Zen Maru Gothic',sans-serif;font-size:11px;padding:4px 14px;border-radius:999px;border:1.5px solid ${eqC};background:${eqBg};color:${eqC};cursor:pointer;font-weight:700;`;
+  eqBtn.onclick=()=>{
+    if(st._isCustom){showResetModal(prefix,'eq');}
+    else{st.ordered=JSON.parse(JSON.stringify(st._origOrdered));st._isCustom=false;_renderBlocks(prefix);_redraw(prefix);renderChecklist(prefix,st.isInc);}
+  };
+  btnRow.appendChild(eqBtn);
+
+  /* カスタム配置バッジ */
+  if(isCustom){
+    const badge=document.createElement('span');
+    badge.className='custom-badge';
+    badge.textContent='✎ カスタム配置';
+    btnRow.appendChild(badge);
+  }
+
+  /* 枠で囲む */
+  const wrap2=document.createElement('div');
+  wrap2.className='block-area-wrap';
+  const lbl2=document.createElement('div');
+  lbl2.className='block-area-label';
+  lbl2.innerHTML='区間ブロック<br>※長押し＆ドラッグで並び順を変えられます';
+  wrap2.appendChild(lbl2);
+  wrap2.appendChild(btnRow);
+
+  const wrap=document.createElement('div');
+  wrap.className='block-area-blocks';
+  if(st.ordered.length<=8) wrap.classList.add('rtl');
+  wrap2.appendChild(wrap);
+  area.appendChild(wrap2);
+
+  const getOrigIdx=(dispIdx)=>st.ordered.length>8?st.ordered.length-1-dispIdx:dispIdx;
+  const displayOrder=st.ordered.length>8?[...st.ordered].map((_,i,a)=>a[a.length-1-i]):st.ordered;
+
+  displayOrder.forEach((grp,dispIdx)=>{
+    const idx=getOrigIdx(dispIdx);
+    const blk=document.createElement('div');
+    let cls,topTxt,botTxt;
+    if(grp.gi===2){cls=noneCls;topTxt=`${grp.size}目`;botTxt=isInc?'増目なし':'減目なし';}
+    else if(grp.gi===0){cls=bigCls;topTxt=`${grp.size}目`;botTxt=`1目${verb}`;}
+    else{cls=smlCls;topTxt=`${grp.size}目`;botTxt=`1目${verb}`;}
+    blk.className='blk '+cls; blk.dataset.idx=idx;
+    blk.innerHTML=`<div class="blk-num">${topTxt}</div><div class="blk-label">${botTxt}</div>`;
+    blk.draggable=true;
+    blk.addEventListener('dragstart',e=>{e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain',String(idx));setTimeout(()=>blk.classList.add('dragging'),0);});
+    blk.addEventListener('dragend',()=>blk.classList.remove('dragging'));
+    blk.addEventListener('dragover',e=>{e.preventDefault();blk.classList.add('drag-over');});
+    blk.addEventListener('dragleave',()=>blk.classList.remove('drag-over'));
+    blk.addEventListener('drop',e=>{
+      e.preventDefault();blk.classList.remove('drag-over');
+      const fi=parseInt(e.dataTransfer.getData('text/plain')),ti=parseInt(blk.dataset.idx);
+      if(fi===ti)return;
+      const item=st.ordered.splice(fi,1)[0];st.ordered.splice(ti,0,item);
+      st._isCustom=JSON.stringify(st.ordered)!==JSON.stringify(st._origOrdered);
+      _renderBlocks(prefix);_redraw(prefix);renderChecklist(prefix,st.isInc);saveState(prefix);
+    });
+    let tClone=null,tFromIdx=-1;
+    function cleanupTouch(){
+      if(tClone){
+        if(tClone.parentNode)tClone.parentNode.removeChild(tClone);
+        tClone=null;
+      }
+      blk.classList.remove('dragging');
+      wrap.querySelectorAll('.blk').forEach(b=>b.classList.remove('drag-over'));
+    }
+    blk.addEventListener('touchstart',e=>{
+      tFromIdx=idx;
+      const r0=blk.getBoundingClientRect();
+      tClone=blk.cloneNode(true);
+      tClone.style.cssText=`position:fixed;opacity:0.85;pointer-events:none;z-index:9999;left:${r0.left}px;top:${r0.top}px;width:${r0.width}px;margin:0;`;
+      document.body.appendChild(tClone);
+      blk.classList.add('dragging');
+    },{passive:true});
+    blk.addEventListener('touchmove',e=>{
+      e.preventDefault();
+      if(!tClone)return;
+      const t=e.touches[0];
+      const r0=blk.getBoundingClientRect();
+      tClone.style.left=(t.clientX-r0.width/2)+'px';
+      tClone.style.top=(t.clientY-r0.height/2)+'px';
+      wrap.querySelectorAll('.blk').forEach(b=>b.classList.remove('drag-over'));
+      const el=document.elementFromPoint(t.clientX,t.clientY);
+      if(el&&el.classList.contains('blk'))el.classList.add('drag-over');
+    },{passive:false});
+    blk.addEventListener('touchend',e=>{
+      const t=e.changedTouches[0];
+      const el=document.elementFromPoint(t.clientX,t.clientY);
+      cleanupTouch();
+      if(el&&el.classList.contains('blk')){
+        const ti=parseInt(el.dataset.idx);
+        if(tFromIdx!==-1&&tFromIdx!==ti){
+          const item=st.ordered.splice(tFromIdx,1)[0];
+          st.ordered.splice(ti,0,item);
+          st._isCustom=JSON.stringify(st.ordered)!==JSON.stringify(st._origOrdered);
+          _renderBlocks(prefix);_redraw(prefix);renderChecklist(prefix,st.isInc);saveState(prefix);
+        }
+      }
+      tFromIdx=-1;
+    });
+    blk.addEventListener('touchcancel',()=>{
+      cleanupTouch();
+      tFromIdx=-1;
+    });
+    wrap.appendChild(blk);
+  });
+}
+
+function _redraw(prefix){
+  const st=_state[prefix];
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    const seq=_seqFromOrdered(st.ordered,st.isInc);
+    const afterSt=st.isInc?(st.from+st.diff):(st.from-st.diff);
+    drawFig(prefix+'-svg',seq,st.isInc,_checkedGidSet(prefix),afterSt);
+    /* 枠内ラベルを均等／カスタムに応じて更新 */
+    const svgEl=document.getElementById(prefix+'-svg');
+    const figWrap=svgEl?svgEl.closest('.figure-wrap'):null;
+    const lbl=figWrap?figWrap.querySelector('.figure-wrap-label'):null;
+    if(lbl){
+      const isCustom=!!st._isCustom;
+      const eqCls=st.isInc?'fig-equal-inc':'fig-equal-dec';
+      lbl.innerHTML=isCustom
+        ?`配置イメージ <span class="fig-status-badge fig-custom">✎ カスタム</span>`
+        :`配置イメージ <span class="fig-status-badge ${eqCls}">均等</span>`;
+    }
+  }));
+}
+
+function _checkedGidSet(prefix){
+  const st=_state[prefix];
+  if(!st||!st._clChecked)return new Set();
+  const s=new Set();
+  Object.entries(st._clChecked).forEach(([i,done])=>{if(done)s.add(Number(i));});
+  return s;
+}
+
+function _seqFromOrdered(ordered,isInc){
+  const seq=[];
+  ordered.forEach((grp,gid)=>{
+    if(!isInc){
+      /* 減目：gi=2は減目なし、gi=0/1は減目あり（最後に▼） */
+      if(grp.gi===2){
+        for(let j=0;j<grp.size;j++)seq.push({t:2,g:2,gid});
+      } else {
+        for(let j=0;j<grp.size-1;j++)seq.push({t:0,g:grp.gi,gid});
+        seq.push({t:1,g:grp.gi,gid});
+      }
+    } else {
+      /* 増目：gi=2は増目なし（▲なし）、gi=0/1は増目あり（最後に▲） */
+      if(grp.gi===2){
+        for(let j=0;j<grp.size;j++)seq.push({t:2,g:2,gid});
+      } else {
+        for(let j=0;j<grp.size;j++)seq.push({t:0,g:grp.gi,gid});
+        seq.push({t:1,g:grp.gi,gid});
+      }
+    }
+  });
+  return seq;
+}
+
+function renderChecklist(prefix,isInc){
+  const st=_state[prefix];
+  if(!st||!st.ordered)return;
+  const el=document.getElementById(prefix+'-checklist');
+  if(!el)return;
+  const verb=isInc?'増':'減',noneVerb=isInc?'増目なし':'減目なし';
+  const prevChecked=st._clChecked||{};
+  const hasBig=st.ordered.some(g=>g.gi===0),hasSmall=st.ordered.some(g=>g.gi===1),mixed=hasBig&&hasSmall;
+  const items=st.ordered.map((grp)=>{
+    let label,cls,dotColor;
+    if(grp.gi===2){
+      label=`${grp.size}目 ${noneVerb}（操作なし）`;
+      cls=isInc?'ci-none-inc':'ci-none-dec';
+      dotColor='#c8c8c8';
+    } else if(grp.gi===0){
+      label=mixed?`${grp.size}目ごとに 1目${verb}（大きい間隔）`:`${grp.size}目ごとに 1目${verb}`;
+      cls=isInc?'ci-big-inc':'ci-big-dec';
+      dotColor=isInc?'#D9939E':'#8DAEBD';
+    } else {
+      label=mixed?`${grp.size}目ごとに 1目${verb}（小さい間隔）`:`${grp.size}目ごとに 1目${verb}`;
+      cls=isInc?'ci-sml-inc':'ci-sml-dec';
+      dotColor=isInc?'#E8B8BC':'#AECAD6';
+    }
+    return{label,cls,dotColor};
+  });
+  const checked={};items.forEach((_,i)=>{checked[i]=prevChecked[i]||false;});
+  st._clChecked=checked;
+  const total=items.length;
+  function rebuild(){
+    el.innerHTML='';
+    const doneCount=Object.values(checked).filter(Boolean).length;
+    const pct=total===0?0:Math.round(doneCount/total*100);
+    const progWrap=document.createElement('div');progWrap.className='checklist-progress';
+    progWrap.innerHTML=`<div class="checklist-progress-bar-bg"><div class="checklist-progress-bar${isInc?' mint-bar':''}" style="width:${pct}%"></div></div><div class="checklist-progress-label">${doneCount}/${total}</div><button class="checklist-reset">リセット</button>`;
+    progWrap.querySelector('.checklist-reset').onclick=()=>{items.forEach((_,i)=>{checked[i]=false;});rebuild();_redraw(prefix);};
+    el.appendChild(progWrap);
+    const nextIdx=items.findIndex((_,i)=>!checked[i]);
+    items.forEach((it,i)=>{
+      const row=document.createElement('div');
+      const isDone=checked[i],isCurrent=!isDone&&i===nextIdx;
+      /* 操作できるのは：現在のアイテム（チェック）か最後にチェックしたアイテム（チェック解除）のみ */
+      const lastDoneIdx=Object.keys(checked).map(Number).filter(k=>checked[k]).pop()??-1;
+      const isClickable=isCurrent||(isDone&&i===lastDoneIdx);
+      row.className=`checklist-item ${it.cls}${isDone?' done':''}${isCurrent?' current'+(isInc?' mint-current':''):''}${!isClickable&&!isDone?' locked':''}`;
+      row.innerHTML=`<div class="ci-checkbox">${isDone?'✓':''}</div><div class="ci-dot" style="background:${it.dotColor}"></div><div class="ci-text">${it.label}</div><div class="ci-count">${i+1}/${total}</div>`;
+      row.onclick=()=>{
+        if(!isClickable)return;
+        checked[i]=!checked[i];rebuild();_redraw(prefix);
+      };
+      el.appendChild(row);
+    });
+  }
+  rebuild();
+}
+
+/* SVG編み図 */
+function drawFig(svgId,seq,isInc,checkedSet,afterStitches){
+  const doneGids=checkedSet||new Set();
+  const svg=document.getElementById(svgId);svg.innerHTML='';
+  const ns='http://www.w3.org/2000/svg',total=seq.length;
+  if(total===0)return;
+  const SZ=22,R=8,PAD=12,ROW_H=70,VPAD=16;
+
+  const groups=[];let gi2=0;
+  while(gi2<total){const gid=seq[gi2].gid;let len=0;while(gi2+len<total&&seq[gi2+len].gid===gid)len++;groups.push({gid,len,start:gi2,g:seq[gi2].g});gi2+=len;}
+  const maxGroupLen=Math.max(...groups.map(g=>g.len));
+
+  let containerW=0,elp=svg.parentElement;
+  while(elp){const style=window.getComputedStyle(elp);const pl=parseFloat(style.paddingLeft)||0,pr=parseFloat(style.paddingRight)||0,w=elp.getBoundingClientRect().width-pl-pr;if(w>50){containerW=w;break;}elp=elp.parentElement;}
+  if(!containerW)containerW=Math.min(window.innerWidth||360,600)-32;
+  /* 1行に収まる列数（コンテナ幅から算出） */
+  const fitCols=Math.max(1,Math.floor((containerW-PAD*2)/SZ));
+  const maxCOLS=fitCols;
+
+  const rowAssign=new Array(total);let curRow=0,curCol=0;
+  for(const grp of groups){
+    /* グループ全体が収まらない場合は次の行へ（ただし1行より長いグループは行内で折り返す） */
+    if(curCol>0&&grp.len<=maxCOLS&&curCol+grp.len>maxCOLS){curRow++;curCol=0;}
+    for(let li=0;li<grp.len;li++){
+      if(curCol>=maxCOLS){curRow++;curCol=0;}
+      /* 減目区間の場合：▼（最後の目）とその1つ前の目が行末で分断されないよう確認 */
+      /* ▼は li===grp.len-1、その前は li===grp.len-2 */
+      if(!isInc && li===grp.len-2 && curCol===maxCOLS-1){
+        /* 残り1列しかないのに▼とペアで2つ必要 → 次の行へ */
+        curRow++;curCol=0;
+      }
+      rowAssign[grp.start+li]={row:curRow,col:curCol};
+      curCol++;
+    }
+    if(curCol>=maxCOLS){curRow++;curCol=0;}
+  }
+  const maxRow=Math.max(...rowAssign.map(a=>a.row)),rows=maxRow+1;
+  const rowCols=new Array(rows).fill(0);rowAssign.forEach(a=>{rowCols[a.row]=Math.max(rowCols[a.row],a.col+1);});
+  const maxCols=Math.max(...rowCols);
+  const W=Math.min(maxCols*SZ+PAD*2, containerW),H=rows*ROW_H+VPAD*2+42;
+  svg.setAttribute('viewBox','0 0 '+W+' '+H);svg.setAttribute('width',W);svg.setAttribute('height',H);
+
+  /*
+    gi===0 → 大きい間隔（やや濃い色）
+    gi===1 → 小さい間隔（淡い色）
+    gi===2 → なし
+  */
+  const bgColors=isInc
+    ?['#F0CBCF','#FAE9EB','#f0f0f0']   /* 増目: 大きい=濃いピンク / 小さい=淡いピンク */
+    :['#C2D9E4','#E4EFF4','#f0f0f0'];  /* 減目: 大きい=濃いブルー / 小さい=淡いブルー */
+  const opFill  =isInc?'#F0CBCF':'#C2D9E4';
+  const opStroke=isInc?'#D9939E':'#8DAEBD';
+  const opTxt   =isInc?'#9a5060':'#3a6a7a';
+  const arcColor=isInc?'#D9939E':'#8DAEBD';
+
+  function baseY(row){return(rows-1-row)*ROW_H+VPAD;}
+  function xOf(row,col){const cols=rowCols[row],offset=PAD+(maxCols-cols)*SZ/2;return offset+(cols-1-col)*SZ+SZ/2;}
+
+  for(let row=0;row<rows;row++){
+    if(rows<=1)continue;
+    const cols=rowCols[row],by=baseY(row),offset=PAD+(maxCols-cols)*SZ/2;
+    const lbl=document.createElementNS(ns,'text');
+    lbl.setAttribute('x',offset+cols*SZ+4);lbl.setAttribute('y',by+20);lbl.setAttribute('dominant-baseline','middle');
+    lbl.setAttribute('fill','#ccc');lbl.setAttribute('font-size','10');lbl.setAttribute('font-family','sans-serif');lbl.textContent='←';
+    svg.appendChild(lbl);
+  }
+
+  let gi=0;
+  while(gi<total){
+    const gid=seq[gi].gid,g=seq[gi].g;let gEnd=gi;
+    while(gEnd+1<total&&seq[gEnd+1].gid===gid)gEnd++;
+    let cur=gi;
+    while(cur<=gEnd){
+      const{row,col}=rowAssign[cur],by=baseY(row),cols=rowCols[row],offset=PAD+(maxCols-cols)*SZ/2;
+      let rowEnd=cur;while(rowEnd+1<=gEnd&&rowAssign[rowEnd+1].row===row)rowEnd++;
+      const span=rowEnd-cur+1,xL=offset+(cols-1-(col+span-1))*SZ;
+      const isDone=doneGids.has(gid);
+      const bg=document.createElementNS(ns,'rect');
+      bg.setAttribute('x',xL);bg.setAttribute('y',by+8);bg.setAttribute('width',span*SZ);bg.setAttribute('height',24);
+      bg.setAttribute('rx',4);bg.setAttribute('fill',bgColors[g]);bg.setAttribute('opacity',isDone?'0.18':'0.72');
+      svg.appendChild(bg);cur=rowEnd+1;
+    }
+    gi=gEnd+1;
+  }
+
+  for(let i=1;i<total;i++){
+    if(seq[i].gid===seq[i-1].gid)continue;
+    const{row,col}=rowAssign[i],{row:prow}=rowAssign[i-1];
+    if(row===prow){
+      const by=baseY(row),cols=rowCols[row],offset=PAD+(maxCols-cols)*SZ/2,lx=offset+(cols-col)*SZ;
+      const vl=document.createElementNS(ns,'line');
+      vl.setAttribute('x1',lx);vl.setAttribute('y1',by+8);vl.setAttribute('x2',lx);vl.setAttribute('y2',by+32);
+      vl.setAttribute('stroke',isInc?'#D9B0B5':'#9BBFCC');vl.setAttribute('stroke-width','1.5');svg.appendChild(vl);
+    }
+  }
+
+  /* 区間ごとに1からスタートする目番号を計算 */
+  /* col=0が右端=1、col増加で番号増加 */
+
+  for(let i=0;i<total;i++){
+    const{t,g,gid}=seq[i],{row,col}=rowAssign[i];
+    const x=xOf(row,col),y=baseY(row)+20,isDone=doneGids.has(gid);
+    const grpEl=document.createElementNS(ns,'g');if(isDone)grpEl.setAttribute('opacity','0.25');
+    if(t===1){c(grpEl,ns,x,y,R,opFill,opStroke,2);tx(grpEl,ns,x,y,isInc?'▲':'▼',opTxt,9);}
+    else if(t===2){c(grpEl,ns,x,y,R,'#f0f0f0','#cccccc',1.5);}
+    else{c(grpEl,ns,x,y,R,'rgba(255,255,255,0.7)','#d8d0d4',1.2);}
+    svg.appendChild(grpEl);
+  }
+
+  /* 最初の区間のgid・最後の区間のgidを特定 */
+  const firstGid=groups[0].gid;
+  const lastGid=groups[groups.length-1].gid;
+  /* 編み終わりのトータル目数（from = 元々の目数） */
+  /* seqの全目数がfromに等しい */
+  const totalStitches=total;
+
+  /* 区間ごとに両端番号と減目番号を表示 */
+  for(const grp of groups){
+    const gSize=grp.len;
+    const isDecGrp=!isInc&&seq.slice(grp.start,grp.start+grp.len).some(s=>s.t===1);
+    const isFirstGrp=grp.gid===firstGid;
+    const isLastGrp=grp.gid===lastGid;
+
+    let inGrpIdx=0;
+    let rowStart=grp.start;
+
+    while(rowStart<grp.start+grp.len){
+      const{row}=rowAssign[rowStart];
+      let rowEnd=rowStart;
+      while(rowEnd+1<grp.start+grp.len&&rowAssign[rowEnd+1].row===row)rowEnd++;
+      const rowLen=rowEnd-rowStart+1;
+      const by=baseY(row);
+
+      const rightX=xOf(row,rowAssign[rowStart].col);
+      const leftX=xOf(row,rowAssign[rowEnd].col);
+
+      /* 区間の最右端に「1」 — 弧中点と同じY位置 */
+      /* 減目あり2目区間は弧の中央に番号が出るので右端「1」は非表示 */
+      if(inGrpIdx===0 && !(isDecGrp && gSize===2)){
+        const yBase=baseY(row)+20,ctrlY=yBase+R+SZ*0.65;
+        const numY=ctrlY+7;
+        const rLbl=document.createElementNS(ns,'text');
+        rLbl.setAttribute('x',rightX);rLbl.setAttribute('y',numY);
+        rLbl.setAttribute('text-anchor','middle');rLbl.setAttribute('dominant-baseline','middle');
+        rLbl.setAttribute('fill','#bbb');rLbl.setAttribute('font-size','9');rLbl.setAttribute('font-family','sans-serif');
+        rLbl.textContent='1';
+        svg.appendChild(rLbl);
+        /* 最初の区間かつ一番下の行（row===0）のみ「(編み始め)」 */
+        if(isFirstGrp&&row===0){
+          const startLbl=document.createElementNS(ns,'text');
+          startLbl.setAttribute('x',rightX);startLbl.setAttribute('y',numY+12);
+          startLbl.setAttribute('text-anchor','middle');startLbl.setAttribute('dominant-baseline','middle');
+          startLbl.setAttribute('fill','#bbb');startLbl.setAttribute('font-size','8');startLbl.setAttribute('font-family','sans-serif');
+          startLbl.textContent='(編み始め)';
+          svg.appendChild(startLbl);
+        }
+      }
+
+      /* 区間の最左端 - 減目なし・増目区間のみ表示（減目あり区間は弧の中点に表示） */
+      if(inGrpIdx+rowLen>=gSize && !isDecGrp){
+        const maxNum=gSize;
+        const yBase=baseY(row)+20,ctrlY=yBase+R+SZ*0.65;
+        const numY=ctrlY+7;
+        const lLbl=document.createElementNS(ns,'text');
+        lLbl.setAttribute('x',leftX);lLbl.setAttribute('y',numY);
+        lLbl.setAttribute('text-anchor','middle');lLbl.setAttribute('dominant-baseline','middle');
+        lLbl.setAttribute('fill','#bbb');
+        lLbl.setAttribute('font-size','9');lLbl.setAttribute('font-weight','400');
+        lLbl.setAttribute('font-family','sans-serif');
+        lLbl.textContent=String(maxNum);
+        svg.appendChild(lLbl);
+        /* 最後の区間の左端に「(after目)」 */
+        if(isLastGrp){
+          const endNum=afterStitches!=null?afterStitches:totalStitches;
+          const endLbl=document.createElementNS(ns,'text');
+          endLbl.setAttribute('x',leftX);endLbl.setAttribute('y',numY+12);
+          endLbl.setAttribute('text-anchor','middle');endLbl.setAttribute('dominant-baseline','middle');
+          endLbl.setAttribute('fill','#bbb');endLbl.setAttribute('font-size','8');endLbl.setAttribute('font-family','sans-serif');
+          endLbl.textContent=`(${endNum}目)`;
+          svg.appendChild(endLbl);
+        }
+      }
+
+      inGrpIdx+=rowLen;
+      rowStart=rowEnd+1;
+    }
+  }
+
+  /* 減目の点線アークと、弧の中点の下に区間内番号 */
+  if(!isInc){
+    for(let i=0;i<total;i++){
+      const{t,gid}=seq[i];if(t!==1)continue;
+      const{row,col}=rowAssign[i],isDone=doneGids.has(gid);
+      if(i-1>=0&&seq[i-1].gid===gid&&rowAssign[i-1].row===row){
+        const xLeft=xOf(row,col),xRight=xOf(row,col-1);
+        const yBase=baseY(row)+20,arcY=yBase+R,ctrlY=yBase+R+SZ*0.65,ctrlX=(xLeft+xRight)/2;
+        const arcEl=document.createElementNS(ns,'path');
+        arcEl.setAttribute('d',`M${xLeft} ${arcY} Q${ctrlX} ${ctrlY} ${xRight} ${arcY}`);
+        arcEl.setAttribute('fill','none');arcEl.setAttribute('stroke',arcColor);
+        arcEl.setAttribute('stroke-width','1.8');arcEl.setAttribute('stroke-dasharray','3 3');
+        arcEl.setAttribute('opacity',isDone?'0.15':'0.6');
+        svg.appendChild(arcEl);
+        /* この▼が区間内で何番目の減目か（右から）を計算 */
+        /* グループ内でのseq位置を特定 */
+        const grpObj=groups.find(g=>g.gid===gid);
+        if(grpObj){
+          /* ▼は区間の最左（col最大）にある = 区間内右から grpObj.len 番目 */
+          /* 右端から数えた番号 = col+1 は行内番号なので使えない */
+          /* 正しくは：▼とその隣の目で「2目→1目」なので番号は gSize-1 */
+          const arcNum=grpObj.len-1;
+          const arcMidX=ctrlX;
+          const arcMidY=ctrlY+7;
+          const arcLbl=document.createElementNS(ns,'text');
+          arcLbl.setAttribute('x',arcMidX);arcLbl.setAttribute('y',arcMidY);
+          arcLbl.setAttribute('text-anchor','middle');arcLbl.setAttribute('dominant-baseline','middle');
+          arcLbl.setAttribute('fill',isDone?'#ccc':opStroke);
+          arcLbl.setAttribute('font-size','9');arcLbl.setAttribute('font-weight','700');
+          arcLbl.setAttribute('font-family','sans-serif');
+          arcLbl.textContent=String(arcNum);
+          svg.appendChild(arcLbl);
+        }
+      }
+    }
+  }
+}
+
+function c(svg,ns,cx,cy,r,fill,stroke,sw){const el=document.createElementNS(ns,'circle');el.setAttribute('cx',cx);el.setAttribute('cy',cy);el.setAttribute('r',r);el.setAttribute('fill',fill);el.setAttribute('stroke',stroke);el.setAttribute('stroke-width',sw);svg.appendChild(el);}
+function tx(svg,ns,x,y,txt,fill,size){const el=document.createElementNS(ns,'text');el.setAttribute('x',x);el.setAttribute('y',y);el.setAttribute('text-anchor','middle');el.setAttribute('dominant-baseline','middle');el.setAttribute('fill',fill);el.setAttribute('font-size',size);el.setAttribute('font-family','sans-serif');el.textContent=txt;svg.appendChild(el);}
+</script>
+</body>
+</html>
