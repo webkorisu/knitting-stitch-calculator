@@ -277,10 +277,10 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    margin: 26px 0 14px;
+    margin: 32px 0 32px;
   }
   .sec-div span {
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 700;
     color: var(--text-sub);
     white-space: nowrap;
@@ -295,7 +295,7 @@
   }
 
   /* サマリーカード */
-  .summary-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+  .summary-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 32px; }
   .sum-card {
     flex: 1; min-width: 110px;
     border-radius: var(--radius-sm);
@@ -321,14 +321,14 @@
     background: var(--dec-sml);
     border-radius: var(--radius-sm);
     padding: 14px 16px;
-    margin-bottom: 4px;
+    margin-bottom: 32px;
   }
   .div-explain strong { color: var(--dec); }
   .div-explain.mint-ex { background: var(--inc-sml); }
   .div-explain.mint-ex strong { color: var(--inc); }
 
   /* how-cards */
-  .how-cards { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+  .how-cards { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 32px; }
   .how-card {
     flex: 1; min-width: 110px;
     border-radius: var(--radius-sm);
@@ -364,11 +364,7 @@
     background: var(--surface);
     border-radius: var(--radius-sm);
     border: 1.5px solid var(--border);
-    padding: 95px 12px 40px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    padding: 50px 12px 16px;
     overflow: hidden;
     position: relative;
   }
@@ -377,7 +373,7 @@
     top: 8px;
     left: 10px;
     font-family: 'Zen Maru Gothic', sans-serif;
-    font-size: 9px;
+    font-size: 11px;
     font-weight: 700;
     color: var(--text-sub);
     letter-spacing: .08em;
@@ -387,10 +383,10 @@
     gap: 5px;
   }
   .fig-status-badge {
-    font-size: 9px;
+    font-size: 11px;
     font-weight: 700;
     border-radius: 999px;
-    padding: 1px 6px;
+    padding: 1px 7px;
     letter-spacing: .02em;
     opacity: 1;
   }
@@ -504,7 +500,6 @@
     width: 100%;
     overflow: hidden;
     padding: 0;
-    flex: 1;
   }
   svg.sf { display: block; margin: auto; max-width: 100%; }
 
@@ -522,27 +517,27 @@
   }
 
   /* ブロックUI */
-  .block-area { display: flex; flex-direction: column; gap: 0; padding: 0; margin-bottom: 4px; }
+  .block-area { display: flex; flex-direction: column; gap: 0; padding: 0; margin-bottom: 14px; }
   .block-area-wrap {
     border: 1.5px solid var(--border);
     border-radius: var(--radius-sm);
-    padding: 48px 16px 24px;
+    padding: 62px 20px 32px;
     position: relative;
-    margin-bottom: 4px;
+    margin-bottom: 16px;
   }
   .block-area-label {
     position: absolute;
     top: 10px;
     left: 12px;
     font-family: 'Zen Maru Gothic', sans-serif;
-    font-size: 9px;
+    font-size: 11px;
     font-weight: 700;
     color: var(--text-sub);
     letter-spacing: .08em;
     opacity: 0.6;
     line-height: 1.6;
   }
-  .block-area-btns { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; justify-content: center; }
+  .block-area-btns { display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; justify-content: center; }
   .block-area-blocks { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: center; }
   .block-area-blocks.rtl { flex-direction: row-reverse; }
 
@@ -575,7 +570,7 @@
   .blk-label { font-size: 10px; color: var(--text-sub); margin-top: 1px; }
 
   /* チェックリスト */
-  .checklist-wrap { margin-bottom: 4px; }
+  .checklist-wrap { margin-bottom: 0; }
   .checklist-progress { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
   .checklist-progress-bar-bg { flex: 1; height: 5px; border-radius: 99px; background: var(--border); overflow: hidden; }
   .checklist-progress-bar { height: 100%; border-radius: 99px; background: var(--dec); transition: width 0.4s cubic-bezier(.4,0,.2,1); width: 0%; }
@@ -632,7 +627,7 @@
   .ci-count { font-size: 11px; font-weight: 700; color: var(--text-sub); white-space: nowrap; }
 
   @media(min-width:500px){
-    .panel-wrap { padding: 32px 28px; margin-left: 24px; margin-right: 24px; }
+    .panel-wrap { padding: 28px 28px 22px; margin-left: 24px; margin-right: 24px; }
   }
   @media(min-width:680px){
     .panel-wrap { margin-left: auto; margin-right: auto; max-width: 640px; }
@@ -640,6 +635,17 @@
     header { padding: 36px 20px 20px; }
     /* PC：ボタン幅を入力欄（220px）に揃えてすっきり */
     .calc-btn { max-width: 220px; }
+  }
+
+  .accordion-footer {
+    margin: 24px 20px 0;
+    padding-bottom: 0;
+  }
+  @media(min-width:500px){
+    .accordion-footer { margin-left: 24px; margin-right: 24px; }
+  }
+  @media(min-width:680px){
+    .accordion-footer { margin-left: auto; margin-right: auto; max-width: 640px; }
   }
 
   /* ── ダークモード強制無効化 ── */
@@ -664,11 +670,11 @@
   /* ─── データ注意書きアコーディオン（最下部） ─── */
   .data-note {
     width: 100%;
-    border-radius: var(--radius-sm);
+    border-radius: 12px;
     overflow: hidden;
     border: 1.5px solid var(--border);
     background: var(--surface);
-    margin-bottom: 40px;
+    margin-bottom: 2px;
   }
   .data-note-btn {
     width: 100%;
@@ -707,6 +713,18 @@
   .data-note.open .data-note-body { display: block; }
   .data-note-body p { margin-bottom: 6px; }
   .data-note-body p:last-child { margin-bottom: 0; }
+
+  .last-updated {
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 10px;
+    color: var(--text-sub);
+    opacity: 0.5;
+    text-align: right;
+    letter-spacing: .06em;
+    padding: 6px 20px 16px;
+    max-width: 640px;
+    margin: 0 auto;
+  }
 </style>
 </head>
 <body>
@@ -733,7 +751,7 @@
   <!-- 減目パネル -->
   <div id="panel-dec" class="panel active">
     <div class="note">分散減目とは、目を均等に減らす方法です。<br>こちらのツールでは元々の目数を減らす目数＋１で分割して計算しています。</div>
-    <div class="field"><label>元々の目数</label><input type="number" id="dec-from" min="1" max="999" placeholder="例: 12" inputmode="numeric" onblur="if(this.value>999)this.value=999;if(this.value<1&&this.value!='')this.value=1;"></div>
+    <div class="field"><label>元々の目数</label><input type="number" id="dec-from" min="2" max="999" placeholder="例: 12" inputmode="numeric" onblur="if(this.value>999)this.value=999;if(this.value<2&&this.value!='')this.value=2;"></div>
     <div class="field"><label>減らした後の目数</label><input type="number" id="dec-to" min="1" max="998" placeholder="例: 8" inputmode="numeric" onblur="if(this.value>998)this.value=998;if(this.value<1&&this.value!='')this.value=1;"></div>
     <button class="calc-btn calc-btn-dec" onclick="calcDec()">計算する</button>
     <div class="error" id="dec-error"></div>
@@ -749,11 +767,11 @@
       <div class="how-cards" id="dec-cards"></div>
       <div class="sec-div"><span>目の配置イメージ</span></div>
       <div id="dec-block-area" class="block-area"></div>
-      <div class="figure-wrap" style="margin-top:10px;">
+      <div class="figure-wrap" style="margin-top:14px;">
         <div class="figure-wrap-label">配置イメージ</div>
         <div class="figure-scroll"><svg id="dec-svg" class="sf"></svg></div>
       </div>
-      <div class="sec-div" style="margin-top:24px;"><span>編み進め チェックリスト</span></div>
+      <div class="sec-div" style="margin-top:32px;margin-bottom:20px;"><span>編み進め チェックリスト</span></div>
       <div id="dec-checklist" class="checklist-wrap"></div>
     </div>
   </div>
@@ -761,7 +779,7 @@
   <!-- 増目パネル -->
   <div id="panel-inc" class="panel">
     <div class="note mint-note">分散増目とは、目を均等に増やす方法です。<br>こちらのツールでは元々の目数を増やす目数＋１で分割して計算しています。</div>
-    <div class="field mint-field"><label>元々の目数</label><input type="number" id="inc-from" min="1" max="998" placeholder="例: 8" inputmode="numeric" onblur="if(this.value>998)this.value=998;if(this.value<1&&this.value!='')this.value=1;"></div>
+    <div class="field mint-field"><label>元々の目数</label><input type="number" id="inc-from" min="2" max="998" placeholder="例: 8" inputmode="numeric" onblur="if(this.value>998)this.value=998;if(this.value<2&&this.value!='')this.value=2;"></div>
     <div class="field mint-field"><label>増やした後の目数</label><input type="number" id="inc-to" min="1" max="999" placeholder="例: 12" inputmode="numeric" onblur="if(this.value>999)this.value=999;if(this.value<1&&this.value!='')this.value=1;"></div>
     <button class="calc-btn calc-btn-inc" onclick="calcInc()">計算する</button>
     <div class="error" id="inc-error"></div>
@@ -777,28 +795,48 @@
       <div class="how-cards" id="inc-cards"></div>
       <div class="sec-div m"><span>目の配置イメージ</span></div>
       <div id="inc-block-area" class="block-area"></div>
-      <div class="figure-wrap m" style="margin-top:10px;">
+      <div class="figure-wrap m" style="margin-top:14px;">
         <div class="figure-wrap-label">配置イメージ</div>
         <div class="figure-scroll"><svg id="inc-svg" class="sf"></svg></div>
       </div>
-      <div class="sec-div m" style="margin-top:24px;"><span>編み進め チェックリスト</span></div>
+      <div class="sec-div m" style="margin-top:32px;margin-bottom:20px;"><span>編み進め チェックリスト</span></div>
       <div id="inc-checklist" class="checklist-wrap"></div>
     </div>
   </div>
 </div>
 
-<div style="margin: 24px 20px 0; max-width: 640px; margin-left: auto; margin-right: auto; padding: 0 20px;">
-  <div class="data-note" id="dataNote">
-    <button class="data-note-btn" onclick="toggleDataNote()">
-      <span>✿ データについて</span>
-      <span class="data-note-arrow">▼</span>
-    </button>
-    <div class="data-note-body">
-      <p>データはこの端末のブラウザに保存されます。<br>スマホとPCなど、端末が異なると記録は共有されません。</p>
-      <p>ブラウザの「履歴を消去」や「キャッシュ削除」を行うと、保存されたデータが消える場合があります。大切な記録はメモなどに控えておくと安心です。</p>
+<div class="accordion-footer">
+  <div style="display:flex; flex-direction:column; gap:6px;">
+
+    <!-- このアプリについて（免責） -->
+    <div class="data-note" id="aboutNote">
+      <button class="data-note-btn" onclick="toggleAboutNote()">
+        <span>✿ このアプリについて</span>
+        <span class="data-note-arrow">▼</span>
+      </button>
+      <div class="data-note-body">
+        <p>このアプリは、編み物や日々の暮らしをちょっと便利にするために作られた個人制作のツールです。</p>
+        <p>計算結果・提案内容はすべて参考情報としてお使いください。編み物の仕上がりや作業結果はゲージ・素材・個人差によって異なります。必ずご自身でご確認のうえお使いください。</p>
+        <p>作者（YUCCHI）は、アプリの内容・結果によって生じたいかなる損害についても責任を負いかねます。あらかじめご了承ください。</p>
+      </div>
     </div>
+
+    <!-- データについて -->
+    <div class="data-note" id="dataNote">
+      <button class="data-note-btn" onclick="toggleDataNote()">
+        <span>✿ データについて</span>
+        <span class="data-note-arrow">▼</span>
+      </button>
+      <div class="data-note-body">
+        <p>データはこの端末のブラウザに保存されます。<br>スマホとPCなど、端末が異なると記録は共有されません。</p>
+        <p>ブラウザの「履歴を消去」や「キャッシュ削除」を行うと、保存されたデータが消える場合があります。大切な記録はメモなどに控えておくと安心です。</p>
+      </div>
+    </div>
+
   </div>
 </div>
+
+<div class="last-updated">最終更新：2026.05.16</div>
 
 <div id="modal-overlay" class="modal-overlay" style="display:none;" onclick="closeModal()">
   <div class="modal-box" onclick="event.stopPropagation()">
@@ -806,7 +844,7 @@
     <div class="modal-body" id="modal-body">カスタム配置の並び順はリセットされます。</div>
     <div class="modal-btns">
       <button class="modal-btn-cancel" onclick="closeModal()">キャンセル</button>
-      <button class="modal-btn-ok" id="modal-ok-btn" onclick="confirmReset()">リセット</button>
+      <button class="modal-btn-ok" id="modal-ok-btn" onclick="confirmReset()">戻す</button>
     </div>
   </div>
 </div>
@@ -820,13 +858,14 @@ function showResetModal(prefix,mode){
   const okBtn=document.getElementById('modal-ok-btn');
   okBtn.className='modal-btn-ok '+(isInc?'modal-btn-ok-inc':'modal-btn-ok-dec');
   document.getElementById('modal-title').textContent='均等配置に戻しますか？';
-  document.getElementById('modal-body').textContent='';
+  document.getElementById('modal-body').textContent='カスタムで並び替えた順番がリセットされます。';
   document.getElementById('modal-overlay').style.display='flex';
 }
 function closeModal(){
   document.getElementById('modal-overlay').style.display='none';
   _pendingReset=null;
 }
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
 function confirmReset(){
   if(!_pendingReset)return;
   const{prefix,mode}=_pendingReset;
@@ -870,6 +909,9 @@ function saveState(prefix){
 }
 
 
+function toggleAboutNote(){
+  document.getElementById('aboutNote').classList.toggle('open');
+}
 function toggleDataNote(){
   document.getElementById('dataNote').classList.toggle('open');
 }
@@ -888,8 +930,8 @@ function calcDec(){
   err.style.display='none'; res.classList.remove('visible');
   if(!from||!to||isNaN(from)||isNaN(to)){showErr(err,'数字を入力してください。');return;}
   if(to>=from){showErr(err,'減らした後の目数は元々の目数より少なくしてください。');return;}
-  if(from<2){showErr(err,'元々の目数は2以上にしてください。');return;}
   const diff=from-to,divN=diff+1,q=Math.floor(from/divN),r=from%divN;
+  if(q<2){showErr(err,'1目の区間が生じてしまうため、均等に分散できません。入力する目数を変更してください。');return;}
   document.getElementById('dec-diff-sv').textContent=diff+'目';
   document.getElementById('dec-divn-sv').textContent=divN+'分割';
   renderExplain('dec-explain',from,divN,q,r,'減らす',false);
@@ -902,6 +944,7 @@ function calcDec(){
     drawFig('dec-svg',seq,false,_checkedGidSet('dec'),to);
     const lbl=document.querySelector('#dec-svg')?.closest('.figure-wrap')?.querySelector('.figure-wrap-label');
     if(lbl)lbl.innerHTML=`配置イメージ <span class="fig-status-badge fig-equal-dec">均等</span>`;
+    saveState('dec');
   }));
 }
 
@@ -913,10 +956,10 @@ function calcInc(){
   err.style.display='none'; res.classList.remove('visible');
   if(!from||!to||isNaN(from)||isNaN(to)){showErr(err,'数字を入力してください。');return;}
   if(to<=from){showErr(err,'増やした後の目数は元々の目数より多くしてください。');return;}
-  if(from<2){showErr(err,'元々の目数は2以上にしてください。');return;}
   const diff=to-from,divN=diff+1;
   /* 元の目数（from）を分割 */
   const q=Math.floor(from/divN),r=from%divN;
+  if(q<1){showErr(err,'0目の区間が生じてしまうため、均等に分散できません。入力する目数を変更してください。');return;}
   document.getElementById('inc-diff-sv').textContent=diff+'目';
   document.getElementById('inc-divn-sv').textContent=divN+'分割';
   renderExplain('inc-explain',from,divN,q,r,'増やす',true);
@@ -929,6 +972,7 @@ function calcInc(){
     drawFig('inc-svg',seq,true,_checkedGidSet('inc'),to);
     const lbl=document.querySelector('#inc-svg')?.closest('.figure-wrap')?.querySelector('.figure-wrap-label');
     if(lbl)lbl.innerHTML=`配置イメージ <span class="fig-status-badge fig-equal-inc">均等</span>`;
+    saveState('inc');
   }));
 }
 
@@ -1070,14 +1114,29 @@ function _renderBlocks(prefix){
 
   const btnRow=document.createElement('div'); btnRow.className='block-area-btns';
   const eqBtn=document.createElement('button');
-  eqBtn.textContent='均等配置';
+  eqBtn.textContent='均等';
   const eqC=isInc?'#D9939E':'#8DAEBD';
   const eqBg=isInc?'#FAE9EB':'#E4EFF4';
-  eqBtn.style.cssText=`font-family:'Zen Maru Gothic',sans-serif;font-size:11px;padding:4px 14px;border-radius:999px;border:1.5px solid ${eqC};background:${eqBg};color:${eqC};cursor:pointer;font-weight:700;`;
+  const setEqBtnState=(custom)=>{
+    if(custom){
+      eqBtn.className='';
+      eqBtn.textContent='均等配置';
+      eqBtn.style.cssText=`font-family:'Zen Maru Gothic',sans-serif;font-size:11px;padding:4px 14px;border-radius:999px;border:1.5px solid ${eqC};background:${eqBg};color:${eqC};cursor:pointer;font-weight:700;transition:opacity .2s,transform .15s;opacity:1;`;
+    } else {
+      eqBtn.textContent='均等配置';
+      eqBtn.className=`fig-status-badge ${isInc?'fig-equal-inc':'fig-equal-dec'}`;
+      eqBtn.style.cssText=`font-family:'Zen Maru Gothic',sans-serif;cursor:default;padding:4px 14px;font-size:11px;font-weight:700;`;
+    }
+  };
+  setEqBtnState(isCustom);
+  eqBtn.addEventListener('mouseenter',()=>{if(st._isCustom)eqBtn.style.opacity='.78';});
+  eqBtn.addEventListener('mouseleave',()=>{if(st._isCustom)eqBtn.style.opacity='1';});
+  eqBtn.addEventListener('mousedown',()=>{if(st._isCustom)eqBtn.style.transform='scale(.97)';});
+  eqBtn.addEventListener('mouseup',()=>{if(st._isCustom)eqBtn.style.transform='scale(1)';});
   eqBtn.onclick=()=>{
     if(st._isCustom){showResetModal(prefix,'eq');}
-    else{st.ordered=JSON.parse(JSON.stringify(st._origOrdered));st._isCustom=false;_renderBlocks(prefix);_redraw(prefix);renderChecklist(prefix,st.isInc);}
   };
+  st._setEqBtnState=setEqBtnState;
   btnRow.appendChild(eqBtn);
 
   /* カスタム配置バッジ */
@@ -1292,7 +1351,7 @@ function drawFig(svgId,seq,isInc,checkedSet,afterStitches){
   const svg=document.getElementById(svgId);svg.innerHTML='';
   const ns='http://www.w3.org/2000/svg',total=seq.length;
   if(total===0)return;
-  const SZ=22,R=8,PAD=12,ROW_H=70,VPAD=16;
+  const SZ=22,R=8,PAD=12,ROW_H=70,VPAD=4;
 
   const groups=[];let gi2=0;
   while(gi2<total){const gid=seq[gi2].gid;let len=0;while(gi2+len<total&&seq[gi2+len].gid===gid)len++;groups.push({gid,len,start:gi2,g:seq[gi2].g});gi2+=len;}
@@ -1325,7 +1384,7 @@ function drawFig(svgId,seq,isInc,checkedSet,afterStitches){
   const maxRow=Math.max(...rowAssign.map(a=>a.row)),rows=maxRow+1;
   const rowCols=new Array(rows).fill(0);rowAssign.forEach(a=>{rowCols[a.row]=Math.max(rowCols[a.row],a.col+1);});
   const maxCols=Math.max(...rowCols);
-  const W=Math.min(maxCols*SZ+PAD*2, containerW),H=rows*ROW_H+VPAD*2+42;
+  const W=Math.min(maxCols*SZ+PAD*2, containerW),H=rows*ROW_H+VPAD*2+10;
   svg.setAttribute('viewBox','0 0 '+W+' '+H);svg.setAttribute('width',W);svg.setAttribute('height',H);
 
   /*
@@ -1513,7 +1572,76 @@ function drawFig(svgId,seq,isInc,checkedSet,afterStitches){
 }
 
 function c(svg,ns,cx,cy,r,fill,stroke,sw){const el=document.createElementNS(ns,'circle');el.setAttribute('cx',cx);el.setAttribute('cy',cy);el.setAttribute('r',r);el.setAttribute('fill',fill);el.setAttribute('stroke',stroke);el.setAttribute('stroke-width',sw);svg.appendChild(el);}
-function tx(svg,ns,x,y,txt,fill,size){const el=document.createElementNS(ns,'text');el.setAttribute('x',x);el.setAttribute('y',y);el.setAttribute('text-anchor','middle');el.setAttribute('dominant-baseline','middle');el.setAttribute('fill',fill);el.setAttribute('font-size',size);el.setAttribute('font-family','sans-serif');el.textContent=txt;svg.appendChild(el);}
+function tx(svg,ns,x,y,txt,fill,size){const el=document.createElementNS(ns,'text');el.setAttribute('x',x);el.setAttribute('text-anchor','middle');el.setAttribute('dominant-baseline','middle');el.setAttribute('fill',fill);el.setAttribute('font-size',size);el.setAttribute('font-family','sans-serif');/* 三角記号（▼▲）はフォントのベースラインがずれるため dy で補正 */const isTriangle=txt==='▼'||txt==='▲';el.setAttribute('y',isTriangle?y+0.5:y);if(isTriangle)el.setAttribute('dy','0.05em');el.textContent=txt;svg.appendChild(el);}
+
+/* ─── ページ読み込み時に localStorage から復元 ─── */
+function restoreState(prefix){
+  try{
+    const raw=localStorage.getItem('yucchi_'+prefix);
+    if(!raw)return;
+    const d=JSON.parse(raw);
+    if(!d||!d.ordered||!d.from)return;
+    const isInc=!!d.isInc;
+    // _state に復元
+    const origOrdered=JSON.parse(JSON.stringify(d.ordered));
+    // 均等配置の _origOrdered を再計算
+    const{from,diff,q,r,noneLen}=d;
+    const eqOrdered = isInc
+      ? buildOrderedGroupsInc(diff,q,r,diff+1)
+      : [...buildOrderedGroups(diff,q,r,false),{size:noneLen,gi:2}];
+    _state[prefix]={
+      from,diff,q,r,isInc,noneLen,
+      ordered:d.ordered,
+      _origOrdered:eqOrdered,
+      _isCustom:JSON.stringify(d.ordered)!==JSON.stringify(eqOrdered)
+    };
+    // 入力欄を復元
+    if(prefix==='dec'){
+      document.getElementById('dec-from').value=from;
+      document.getElementById('dec-to').value=from-diff;
+      document.getElementById('dec-diff-sv').textContent=diff+'目';
+      document.getElementById('dec-divn-sv').textContent=(diff+1)+'分割';
+      renderExplain('dec-explain',from,diff+1,q,r,'減らす',false);
+      renderCards('dec-cards',q,r,diff,diff+1,from,'減らす',false);
+    } else {
+      document.getElementById('inc-from').value=from;
+      document.getElementById('inc-to').value=from+diff;
+      document.getElementById('inc-diff-sv').textContent=diff+'目';
+      document.getElementById('inc-divn-sv').textContent=(diff+1)+'分割';
+      renderExplain('inc-explain',from,diff+1,q,r,'増やす',true);
+      renderCards('inc-cards',q,r,diff,diff+1,from,'増やす',true);
+    }
+    _renderBlocks(prefix);
+    document.getElementById(prefix+'-result').classList.add('visible');
+    renderChecklist(prefix,isInc);
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      const seq=_seqFromOrdered(d.ordered,isInc);
+      const finalTo=isInc?from+diff:from-diff;
+      drawFig(prefix+'-svg',seq,isInc,_checkedGidSet(prefix),finalTo);
+      // バッジ更新
+      const wrap=document.getElementById(prefix+'-svg')?.closest('.figure-wrap');
+      const lbl=wrap?.querySelector('.figure-wrap-label');
+      if(lbl){
+        const isCustom=_state[prefix]._isCustom;
+        if(isCustom) lbl.innerHTML=`配置イメージ <span class="fig-status-badge fig-custom">✎ カスタム</span>`;
+        else lbl.innerHTML=`配置イメージ <span class="fig-status-badge ${isInc?'fig-equal-inc':'fig-equal-dec'}">均等</span>`;
+      }
+    }));
+  }catch(e){ console.warn('restore failed:',e); }
+}
+
+const YUCCHI_VERSION = '1';
+
+document.addEventListener('DOMContentLoaded',()=>{
+  // バージョンチェック：初回または旧バージョンなら古いデータをクリア
+  if(localStorage.getItem('yucchi_version') !== YUCCHI_VERSION){
+    localStorage.removeItem('yucchi_dec');
+    localStorage.removeItem('yucchi_inc');
+    localStorage.setItem('yucchi_version', YUCCHI_VERSION);
+  }
+  restoreState('dec');
+  restoreState('inc');
+});
 </script>
 </body>
 </html>
