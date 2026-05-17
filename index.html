@@ -539,7 +539,6 @@
   }
   .block-area-btns { display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; justify-content: center; }
   .block-area-blocks { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: center; }
-  .block-area-blocks.rtl { flex-direction: row-reverse; }
 
   .blk {
     display: flex; flex-direction: column;
@@ -1158,12 +1157,12 @@ function _renderBlocks(prefix){
 
   const wrap=document.createElement('div');
   wrap.className='block-area-blocks';
-  if(st.ordered.length<=8) wrap.classList.add('rtl');
   wrap2.appendChild(wrap);
   area.appendChild(wrap2);
 
-  const getOrigIdx=(dispIdx)=>st.ordered.length>8?st.ordered.length-1-dispIdx:dispIdx;
-  const displayOrder=st.ordered.length>8?[...st.ordered].map((_,i,a)=>a[a.length-1-i]):st.ordered;
+  // 常に逆順（右端=編み始め）で左から右に並べる
+  const getOrigIdx=(dispIdx)=>st.ordered.length-1-dispIdx;
+  const displayOrder=[...st.ordered].reverse();
 
   displayOrder.forEach((grp,dispIdx)=>{
     const idx=getOrigIdx(dispIdx);
