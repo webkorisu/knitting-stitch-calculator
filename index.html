@@ -274,6 +274,43 @@
 
   .result-area { margin-top: 26px; display: none; }
   .result-area.visible { display: block; }
+  /* ─── フローティングサマリーバッジ ─── */
+  .calc-summary {
+    display: none; /* JS で制御 */
+  }
+  .floating-summary {
+    position: fixed;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-6px);
+    z-index: 100;
+    pointer-events: none;
+    display: flex;
+    justify-content: center;
+    width: max-content;
+    max-width: calc(100vw - 40px);
+    opacity: 0;
+    transition: opacity .3s ease, transform .3s ease;
+  }
+  .floating-summary.visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  .floating-summary-inner {
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: .06em;
+    text-align: center;
+    padding: 7px 20px;
+    background: rgba(251,240,242,0.72);
+    border: 1px solid rgba(234,224,226,0.7);
+    border-radius: 999px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    white-space: nowrap;
+  }
 
   /* セクション区切り */
   .sec-div {
@@ -460,7 +497,9 @@
     font-weight: 700;
     color: var(--text-sub);
     cursor: pointer;
+    transition: opacity .15s;
   }
+  .modal-btn-cancel:hover { opacity: 0.65; }
   .modal-btn-ok {
     flex: 1;
     padding: 10px;
@@ -471,7 +510,9 @@
     font-weight: 700;
     color: #fff;
     cursor: pointer;
+    transition: opacity .15s;
   }
+  .modal-btn-ok:hover { opacity: 0.72; }
   .modal-btn-ok-dec { background: var(--dec); }
   .modal-btn-ok-inc { background: var(--inc); }
   .figure-wrap-header {
@@ -732,6 +773,13 @@
 </head>
 <body>
 
+<!-- フローティングサマリーバッジ -->
+<div class="floating-summary" id="floating-summary">
+  <div class="floating-summary-inner">
+    <span id="fs-text"></span>
+  </div>
+</div>
+
 <header>
   <h1>編み物分散増減計算</h1>
   <h2>Knitting Stitch Calculator</h2>
@@ -759,6 +807,7 @@
     <button class="calc-btn calc-btn-dec" onclick="calcDec()">計算する</button>
     <div class="error" id="dec-error"></div>
     <div class="result-area" id="dec-result">
+      <div class="calc-summary" id="dec-summary"></div>
       <div class="sec-div"><span>何目減らす？ 何分割？</span></div>
       <div class="summary-row">
         <div class="sum-card lav"><h4>何目減らすか</h4><div class="sv" id="dec-diff-sv"></div></div>
@@ -787,6 +836,7 @@
     <button class="calc-btn calc-btn-inc" onclick="calcInc()">計算する</button>
     <div class="error" id="inc-error"></div>
     <div class="result-area" id="inc-result">
+      <div class="calc-summary" id="inc-summary"></div>
       <div class="sec-div m"><span>何目増やす？ 何分割？</span></div>
       <div class="summary-row">
         <div class="sum-card mint"><h4>何目増やすか</h4><div class="sv" id="inc-diff-sv"></div></div>
@@ -864,6 +914,31 @@ function showResetModal(prefix,mode){
   document.getElementById('modal-body').textContent='カスタムで並び替えた順番がリセットされます。';
   document.getElementById('modal-overlay').style.display='flex';
 }
+function _hasChecked(prefix){
+  const st=_state[prefix];
+  if(!st||!st._clChecked)return false;
+  return Object.values(st._clChecked).some(Boolean);
+}
+function showChecklistResetModal(prefix,resetFn){
+  _pendingReset={prefix,mode:'cl-reset',resetFn};
+  const isInc=_state[prefix].isInc;
+  const okBtn=document.getElementById('modal-ok-btn');
+  okBtn.className='modal-btn-ok '+(isInc?'modal-btn-ok-inc':'modal-btn-ok-dec');
+  okBtn.textContent='リセット';
+  document.getElementById('modal-title').textContent='チェックリストをリセットしますか？';
+  document.getElementById('modal-body').textContent='編み進めの記録がすべて消えます。';
+  document.getElementById('modal-overlay').style.display='flex';
+}
+function showRecalcModal(prefix,calcFn){
+  _pendingReset={prefix,mode:'recalc',calcFn};
+  const isInc=_state[prefix].isInc;
+  const okBtn=document.getElementById('modal-ok-btn');
+  okBtn.className='modal-btn-ok '+(isInc?'modal-btn-ok-inc':'modal-btn-ok-dec');
+  okBtn.textContent='リセット';
+  document.getElementById('modal-title').textContent='再計算しますか？';
+  document.getElementById('modal-body').textContent='編み進めのチェックが入っています。再計算するとチェックリストがリセットされます。';
+  document.getElementById('modal-overlay').style.display='flex';
+}
 function closeModal(){
   document.getElementById('modal-overlay').style.display='none';
   _pendingReset=null;
@@ -872,6 +947,14 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
 function confirmReset(){
   if(!_pendingReset)return;
   const{prefix,mode}=_pendingReset;
+  if(mode==='cl-reset'){
+    _pendingReset.resetFn();
+    closeModal();return;
+  }
+  if(mode==='recalc'){
+    _pendingReset.calcFn();
+    closeModal();return;
+  }
   const st=_state[prefix];
   if(mode==='eq'){
     st.ordered=JSON.parse(JSON.stringify(st._origOrdered));
@@ -918,10 +1001,62 @@ function toggleAboutNote(){
 function toggleDataNote(){
   document.getElementById('dataNote').classList.toggle('open');
 }
+/* ─── フローティングサマリー ─── */
+let _summaryState = { dec: null, inc: null };
+let _inputObserver = null;
+
+function _updateFloatingVisibility() {
+  const el = document.getElementById('floating-summary');
+  if (!el) return;
+  /* アクティブタブの入力エリアが画面内に見えているか判定 */
+  const activeTab = document.querySelector('.panel.active');
+  if (!activeTab) { el.classList.remove('visible'); return; }
+  const prefix = activeTab.id === 'panel-dec' ? 'dec' : 'inc';
+  const s = _summaryState[prefix];
+  /* 計算済みデータがなければ常に非表示 */
+  if (!s) { el.classList.remove('visible'); return; }
+  /* 入力欄（計算ボタンまで含むエリア）が見えているか */
+  const firstInput = activeTab.querySelector('input[type="number"]');
+  if (!firstInput) { el.classList.add('visible'); return; }
+  const rect = firstInput.getBoundingClientRect();
+  const inputVisible = rect.bottom > 0 && rect.top < window.innerHeight;
+  if (inputVisible) el.classList.remove('visible');
+  else el.classList.add('visible');
+}
+
+function setFloatingSummary(text, isInc) {
+  const prefix = isInc ? 'inc' : 'dec';
+  _summaryState[prefix] = { text, isInc };
+  /* テキストと色だけ更新・表示判定はスクロール監視に任せる */
+  const fsText = document.getElementById('fs-text');
+  const inner = document.querySelector('.floating-summary-inner');
+  if (fsText) fsText.textContent = text;
+  if (inner) {
+    inner.style.borderColor = isInc ? 'rgba(229,170,175,0.6)' : 'rgba(168,200,214,0.6)';
+    inner.style.background = isInc ? 'rgba(245,218,222,0.72)' : 'rgba(220,233,239,0.72)';
+  }
+  /* 計算直後は入力欄が見えているはずなので非表示のまま */
+  _updateFloatingVisibility();
+}
+
+function _showFloatingSummary(text, isInc) {
+  const fsText = document.getElementById('fs-text');
+  const inner = document.querySelector('.floating-summary-inner');
+  if (fsText) fsText.textContent = text;
+  if (inner) {
+    inner.style.borderColor = isInc ? 'rgba(229,170,175,0.6)' : 'rgba(168,200,214,0.6)';
+    inner.style.background = isInc ? 'rgba(245,218,222,0.72)' : 'rgba(220,233,239,0.72)';
+  }
+  _updateFloatingVisibility();
+}
+
 function switchTab(t){
   ['dec','inc'].forEach(id=>document.getElementById('panel-'+id).classList.toggle('active',id===t));
   document.querySelectorAll('.tab-btn')[0].className='tab-btn'+(t==='dec'?' active-dec':'');
   document.querySelectorAll('.tab-btn')[1].className='tab-btn'+(t==='inc'?' active-inc':'');
+  const s = _summaryState[t];
+  if (s) _showFloatingSummary(s.text, s.isInc);
+  else document.getElementById('floating-summary').classList.remove('visible');
 }
 function showErr(el,msg){el.textContent=msg;el.style.display='block';}
 
@@ -935,20 +1070,25 @@ function calcDec(){
   if(to>=from){showErr(err,'減らした後の目数は元々の目数より少なくしてください。');return;}
   const diff=from-to,divN=diff+1,q=Math.floor(from/divN),r=from%divN;
   if(q<2){showErr(err,'1目の区間が生じてしまうため、均等に分散できません。入力する目数を変更してください。');return;}
-  document.getElementById('dec-diff-sv').textContent=diff+'目';
-  document.getElementById('dec-divn-sv').textContent=divN+'分割';
-  renderExplain('dec-explain',from,divN,q,r,'減らす',false);
-  renderCards('dec-cards',q,r,diff,divN,from,'減らす',false);
-  renderBlockArea('dec-block-area',null,from,diff,q,r,false);
-  res.classList.add('visible');
-  renderChecklist('dec',false);
-  requestAnimationFrame(()=>requestAnimationFrame(()=>{
-    const seq=_seqFromOrdered(_state['dec']._origOrdered,false);
-    drawFig('dec-svg',seq,false,_checkedGidSet('dec'),to);
-    const lbl=document.querySelector('#dec-svg')?.closest('.figure-wrap')?.querySelector('.figure-wrap-label');
-    if(lbl)lbl.innerHTML=`配置イメージ <span class="fig-status-badge fig-equal-dec">均等</span>`;
-    saveState('dec');
-  }));
+  const doCalc=()=>{
+    setFloatingSummary(from+'目から'+to+'目に減らす場合', false);
+    document.getElementById('dec-diff-sv').textContent=diff+'目';
+    document.getElementById('dec-divn-sv').textContent=divN+'分割';
+    renderExplain('dec-explain',from,divN,q,r,'減らす',false);
+    renderCards('dec-cards',q,r,diff,divN,from,'減らす',false);
+    renderBlockArea('dec-block-area',null,from,diff,q,r,false);
+    res.classList.add('visible');
+    renderChecklist('dec',false);
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      const seq=_seqFromOrdered(_state['dec']._origOrdered,false);
+      drawFig('dec-svg',seq,false,_checkedGidSet('dec'),to);
+      const lbl=document.querySelector('#dec-svg')?.closest('.figure-wrap')?.querySelector('.figure-wrap-label');
+      if(lbl)lbl.innerHTML=`配置イメージ <span class="fig-status-badge fig-equal-dec">均等</span>`;
+      saveState('dec');
+    }));
+  };
+  if(_hasChecked('dec')) showRecalcModal('dec',doCalc);
+  else doCalc();
 }
 
 function calcInc(){
@@ -960,23 +1100,27 @@ function calcInc(){
   if(!from||!to||isNaN(from)||isNaN(to)){showErr(err,'数字を入力してください。');return;}
   if(to<=from){showErr(err,'増やした後の目数は元々の目数より多くしてください。');return;}
   const diff=to-from,divN=diff+1;
-  /* 元の目数（from）を分割 */
   const q=Math.floor(from/divN),r=from%divN;
   if(q<1){showErr(err,'0目の区間が生じてしまうため、均等に分散できません。入力する目数を変更してください。');return;}
-  document.getElementById('inc-diff-sv').textContent=diff+'目';
-  document.getElementById('inc-divn-sv').textContent=divN+'分割';
-  renderExplain('inc-explain',from,divN,q,r,'増やす',true);
-  renderCards('inc-cards',q,r,diff,divN,from,'増やす',true);
-  renderBlockArea('inc-block-area',null,from,diff,q,r,true);
-  res.classList.add('visible');
-  renderChecklist('inc',true);
-  requestAnimationFrame(()=>requestAnimationFrame(()=>{
-    const seq=_seqFromOrdered(_state['inc']._origOrdered,true);
-    drawFig('inc-svg',seq,true,_checkedGidSet('inc'),to);
-    const lbl=document.querySelector('#inc-svg')?.closest('.figure-wrap')?.querySelector('.figure-wrap-label');
-    if(lbl)lbl.innerHTML=`配置イメージ <span class="fig-status-badge fig-equal-inc">均等</span>`;
-    saveState('inc');
-  }));
+  const doCalc=()=>{
+    setFloatingSummary(from+'目から'+to+'目に増やす場合', true);
+    document.getElementById('inc-diff-sv').textContent=diff+'目';
+    document.getElementById('inc-divn-sv').textContent=divN+'分割';
+    renderExplain('inc-explain',from,divN,q,r,'増やす',true);
+    renderCards('inc-cards',q,r,diff,divN,from,'増やす',true);
+    renderBlockArea('inc-block-area',null,from,diff,q,r,true);
+    res.classList.add('visible');
+    renderChecklist('inc',true);
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      const seq=_seqFromOrdered(_state['inc']._origOrdered,true);
+      drawFig('inc-svg',seq,true,_checkedGidSet('inc'),to);
+      const lbl=document.querySelector('#inc-svg')?.closest('.figure-wrap')?.querySelector('.figure-wrap-label');
+      if(lbl)lbl.innerHTML=`配置イメージ <span class="fig-status-badge fig-equal-inc">均等</span>`;
+      saveState('inc');
+    }));
+  };
+  if(_hasChecked('inc')) showRecalcModal('inc',doCalc);
+  else doCalc();
 }
 
 function renderExplain(id,from,divN,q,r,verb,isInc){
@@ -1337,7 +1481,11 @@ function renderChecklist(prefix,isInc){
     const pct=total===0?0:Math.round(doneCount/total*100);
     const progWrap=document.createElement('div');progWrap.className='checklist-progress';
     progWrap.innerHTML=`<div class="checklist-progress-bar-bg"><div class="checklist-progress-bar${isInc?' mint-bar':''}" style="width:${pct}%"></div></div><div class="checklist-progress-label">${doneCount}/${total}</div><button class="checklist-reset">リセット</button>`;
-    progWrap.querySelector('.checklist-reset').onclick=()=>{items.forEach((_,i)=>{checked[i]=false;});rebuild();_redraw(prefix);};
+    progWrap.querySelector('.checklist-reset').onclick=()=>{
+      const doReset=()=>{items.forEach((_,i)=>{checked[i]=false;});rebuild();_redraw(prefix);};
+      if(Object.values(checked).some(Boolean)) showChecklistResetModal(prefix,doReset);
+      else doReset();
+    };
     el.appendChild(progWrap);
     const nextIdx=items.findIndex((_,i)=>!checked[i]);
     items.forEach((it,i)=>{
@@ -1616,6 +1764,11 @@ function restoreState(prefix){
       document.getElementById('dec-divn-sv').textContent=(diff+1)+'分割';
       renderExplain('dec-explain',from,diff+1,q,r,'減らす',false);
       renderCards('dec-cards',q,r,diff,diff+1,from,'減らす',false);
+      _summaryState['dec']={text:from+'目から'+(from-diff)+'目に減らす場合',isInc:false};
+      /* decタブがアクティブなら即表示 */
+      if(document.getElementById('panel-dec').classList.contains('active')){
+        _showFloatingSummary(_summaryState['dec'].text,false);
+      }
     } else {
       document.getElementById('inc-from').value=from;
       document.getElementById('inc-to').value=from+diff;
@@ -1623,6 +1776,11 @@ function restoreState(prefix){
       document.getElementById('inc-divn-sv').textContent=(diff+1)+'分割';
       renderExplain('inc-explain',from,diff+1,q,r,'増やす',true);
       renderCards('inc-cards',q,r,diff,diff+1,from,'増やす',true);
+      _summaryState['inc']={text:from+'目から'+(from+diff)+'目に増やす場合',isInc:true};
+      /* incタブがアクティブなら即表示 */
+      if(document.getElementById('panel-inc').classList.contains('active')){
+        _showFloatingSummary(_summaryState['inc'].text,true);
+      }
     }
     _renderBlocks(prefix);
     document.getElementById(prefix+'-result').classList.add('visible');
@@ -1646,7 +1804,6 @@ function restoreState(prefix){
 const YUCCHI_VERSION = '1';
 
 document.addEventListener('DOMContentLoaded',()=>{
-  // バージョンチェック：初回または旧バージョンなら古いデータをクリア
   if(localStorage.getItem('yucchi_version') !== YUCCHI_VERSION){
     localStorage.removeItem('yucchi_dec');
     localStorage.removeItem('yucchi_inc');
@@ -1654,6 +1811,8 @@ document.addEventListener('DOMContentLoaded',()=>{
   }
   restoreState('dec');
   restoreState('inc');
+  /* スクロールで入力欄の見え方を監視してバッジ表示を切り替え */
+  window.addEventListener('scroll', _updateFloatingVisibility, { passive: true });
 });
 </script>
 </body>
