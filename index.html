@@ -166,7 +166,7 @@
     background: var(--surface);
     border-radius: var(--radius);
     box-shadow: var(--shadow);
-    padding: 28px 22px;
+    padding: 28px 22px 20px;
   }
 
   /* ─── パネル ─── */
@@ -224,7 +224,11 @@
     transition: border-color .2s, box-shadow .2s;
     -webkit-appearance: none;
   }
-  .field input[type="number"]:focus {
+  .field input[type="number"]::placeholder {
+    color: var(--text-sub);
+    opacity: 0.45;
+  }
+
     border-color: var(--dec);
     box-shadow: 0 0 0 3px rgba(141,174,189,0.16);
   }
@@ -671,7 +675,7 @@
   .ci-count { font-size: 11px; font-weight: 700; color: var(--text-sub); white-space: nowrap; }
 
   @media(min-width:500px){
-    .panel-wrap { padding: 28px 28px 22px; margin-left: 24px; margin-right: 24px; }
+    .panel-wrap { padding: 28px 28px 20px; margin-left: 24px; margin-right: 24px; }
   }
   @media(min-width:680px){
     .panel-wrap { margin-left: auto; margin-right: auto; max-width: 640px; }
@@ -802,8 +806,8 @@
   <!-- 減目パネル -->
   <div id="panel-dec" class="panel active">
     <div class="note">分散減目とは、目を均等に減らす方法です。<br>こちらのツールでは元々の目数を減らす目数＋１で分割して計算しています。</div>
-    <div class="field"><label>元々の目数</label><input type="number" id="dec-from" min="2" max="999" placeholder="例: 12" inputmode="numeric" onblur="if(this.value>999)this.value=999;if(this.value<2&&this.value!='')this.value=2;"></div>
-    <div class="field"><label>減らした後の目数</label><input type="number" id="dec-to" min="1" max="998" placeholder="例: 8" inputmode="numeric" onblur="if(this.value>998)this.value=998;if(this.value<1&&this.value!='')this.value=1;"></div>
+    <div class="field"><label>元々の目数</label><input type="number" id="dec-from" min="4" max="999" placeholder="例: 12" inputmode="numeric"></div>
+    <div class="field"><label>減らした後の目数</label><input type="number" id="dec-to" min="3" max="998" placeholder="例: 8" inputmode="numeric"></div>
     <button class="calc-btn calc-btn-dec" onclick="calcDec()">計算する</button>
     <div class="error" id="dec-error"></div>
     <div class="result-area" id="dec-result">
@@ -831,8 +835,8 @@
   <!-- 増目パネル -->
   <div id="panel-inc" class="panel">
     <div class="note mint-note">分散増目とは、目を均等に増やす方法です。<br>こちらのツールでは元々の目数を増やす目数＋１で分割して計算しています。</div>
-    <div class="field mint-field"><label>元々の目数</label><input type="number" id="inc-from" min="2" max="998" placeholder="例: 8" inputmode="numeric" onblur="if(this.value>998)this.value=998;if(this.value<2&&this.value!='')this.value=2;"></div>
-    <div class="field mint-field"><label>増やした後の目数</label><input type="number" id="inc-to" min="1" max="999" placeholder="例: 12" inputmode="numeric" onblur="if(this.value>999)this.value=999;if(this.value<1&&this.value!='')this.value=1;"></div>
+    <div class="field mint-field"><label>元々の目数</label><input type="number" id="inc-from" min="2" max="998" placeholder="例: 8" inputmode="numeric"></div>
+    <div class="field mint-field"><label>増やした後の目数</label><input type="number" id="inc-to" min="3" max="999" placeholder="例: 12" inputmode="numeric"></div>
     <button class="calc-btn calc-btn-inc" onclick="calcInc()">計算する</button>
     <div class="error" id="inc-error"></div>
     <div class="result-area" id="inc-result">
@@ -889,7 +893,7 @@
   </div>
 </div>
 
-<div class="last-updated">最終更新：2026.05.17</div>
+<div class="last-updated">最終更新：2026.05.19</div>
 
 <div id="modal-overlay" class="modal-overlay" style="display:none;" onclick="closeModal()">
   <div class="modal-box" onclick="event.stopPropagation()">
@@ -1067,7 +1071,11 @@ function calcDec(){
   const res=document.getElementById('dec-result');
   err.style.display='none'; res.classList.remove('visible');
   if(!from||!to||isNaN(from)||isNaN(to)){showErr(err,'数字を入力してください。');return;}
-  if(to>=from){showErr(err,'減らした後の目数は元々の目数より少なくしてください。');return;}
+  if(from<4||to<3){showErr(err,'入力できる目数の下限は、元々の目数が4以上・減らした後の目数が3以上です。');return;}
+  if(from>999){showErr(err,'元々の目数は999以下にしてください。');return;}
+  if(to>998){showErr(err,'減らした後の目数は998以下にしてください。');return;}
+  if(to===from){showErr(err,'元々の目数と減らした後の目数に同じ目数が入力されています。');return;}
+  if(to>from){showErr(err,'減らした後の目数は元々の目数より少なくしてください。');return;}
   const diff=from-to,divN=diff+1,q=Math.floor(from/divN),r=from%divN;
   if(q<2){showErr(err,'1目の区間が生じてしまうため、均等に分散できません。入力する目数を変更してください。');return;}
   const doCalc=()=>{
@@ -1098,7 +1106,11 @@ function calcInc(){
   const res=document.getElementById('inc-result');
   err.style.display='none'; res.classList.remove('visible');
   if(!from||!to||isNaN(from)||isNaN(to)){showErr(err,'数字を入力してください。');return;}
-  if(to<=from){showErr(err,'増やした後の目数は元々の目数より多くしてください。');return;}
+  if(from<2||to<3){showErr(err,'入力できる目数の下限は、元々の目数が2以上・増やした後の目数が3以上です。');return;}
+  if(from>998){showErr(err,'元々の目数は998以下にしてください。');return;}
+  if(to>999){showErr(err,'増やした後の目数は999以下にしてください。');return;}
+  if(to===from){showErr(err,'元々の目数と増やした後の目数に同じ目数が入力されています。');return;}
+  if(to<from){showErr(err,'増やした後の目数は元々の目数より多くしてください。');return;}
   const diff=to-from,divN=diff+1;
   const q=Math.floor(from/divN),r=from%divN;
   if(q<1){showErr(err,'0目の区間が生じてしまうため、均等に分散できません。入力する目数を変更してください。');return;}
@@ -1733,7 +1745,7 @@ function drawFig(svgId,seq,isInc,checkedSet,afterStitches){
 }
 
 function c(svg,ns,cx,cy,r,fill,stroke,sw){const el=document.createElementNS(ns,'circle');el.setAttribute('cx',cx);el.setAttribute('cy',cy);el.setAttribute('r',r);el.setAttribute('fill',fill);el.setAttribute('stroke',stroke);el.setAttribute('stroke-width',sw);svg.appendChild(el);}
-function tx(svg,ns,x,y,txt,fill,size){const el=document.createElementNS(ns,'text');el.setAttribute('x',x);el.setAttribute('text-anchor','middle');el.setAttribute('dominant-baseline','middle');el.setAttribute('fill',fill);el.setAttribute('font-size',size);el.setAttribute('font-family','sans-serif');/* 三角記号（▼▲）はフォントのベースラインがずれるため dy で補正 */const isTriangle=txt==='▼'||txt==='▲';el.setAttribute('y',isTriangle?y+0.5:y);if(isTriangle)el.setAttribute('dy','0.05em');el.textContent=txt;svg.appendChild(el);}
+function tx(svg,ns,x,y,txt,fill,size){const el=document.createElementNS(ns,'text');el.setAttribute('x',x);el.setAttribute('text-anchor','middle');el.setAttribute('dominant-baseline','middle');el.setAttribute('fill',fill);el.setAttribute('font-size',size);el.setAttribute('font-family','sans-serif');/* 三角記号（▼▲）はフォントのベースラインがずれるため個別に補正 */const isDown=txt==='▼';const isUp=txt==='▲';el.setAttribute('y',isDown?y+0.5:isUp?y+0.5:y);if(isDown)el.setAttribute('dy','0.05em');el.textContent=txt;svg.appendChild(el);}
 
 /* ─── ページ読み込み時に localStorage から復元 ─── */
 function restoreState(prefix){
