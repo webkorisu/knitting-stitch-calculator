@@ -7,10 +7,10 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<title>編み物分散増減計算 | Knitting Stitch Calculator - ✿ YUCCHI ✿</title>
-<meta name="description" content="棒針・かぎ針の分散減目・分散増目をかんたん計算。編み図イメージ付き。Knitting stitch decrease/increase calculator by YUCCHI.">
-<meta property="og:title" content="編み物分散増減計算 | Knitting Stitch Calculator - ✿ YUCCHI ✿">
-<meta property="og:description" content="棒針・かぎ針の分散減目・分散増目をかんたん計算。編み図イメージ付き。">
+<title>編み物の分散計算アプリ | 分散減目・分散増目をかんたん計算 - ✿ YUCCHI ✿</title>
+<meta name="description" content="編み物の分散減目・分散増目を自動計算するアプリです。目数を均等に増やす・減らすを簡単に計算。編み図イメージ・チェックリスト付き。棒針・かぎ針対応。">
+<meta property="og:title" content="編み物の分散計算アプリ | 分散減目・分散増目をかんたん計算 - ✿ YUCCHI ✿">
+<meta property="og:description" content="編み物の分散減目・分散増目を自動計算するアプリです。目数を均等に増やす・減らすを簡単に計算。編み図イメージ・チェックリスト付き。棒針・かぎ針対応。">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -689,11 +689,39 @@
     margin: 24px 20px 0;
     padding-bottom: 0;
   }
+  .x-footer-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 0;
+    margin: 0 20px;
+  }
+  .x-icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+    border: 1.5px solid #EAE0E2;
+    background: #FFFFFF;
+    text-decoration: none;
+    transition: background .2s, border-color .2s;
+    margin-left: 1.5px;
+  }
+  .x-icon-btn svg { fill: #9A8A8E; }
+  .x-icon-btn:hover {
+    background: #faf5f6;
+    border-color: #EAE0E2;
+  }
+  .x-icon-btn:hover svg { fill: #9A8A8E; }
   @media(min-width:500px){
     .accordion-footer { margin-left: 24px; margin-right: 24px; }
+    .x-footer-row { margin-left: 24px; margin-right: 24px; }
   }
   @media(min-width:680px){
     .accordion-footer { margin-left: auto; margin-right: auto; max-width: 640px; }
+    .x-footer-row { margin-left: auto; margin-right: auto; max-width: 640px; }
   }
 
   /* ── ダークモード強制無効化 ── */
@@ -893,7 +921,12 @@
   </div>
 </div>
 
-<div class="last-updated">最終更新：2026.05.19</div>
+<div class="x-footer-row">
+  <a href="https://x.com/yuttyan4444" target="_blank" rel="noopener noreferrer" aria-label="XでYUCCHIをフォロー" class="x-icon-btn">
+    <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.747l7.73-8.835L1.254 2.25H8.08l4.254 5.622L18.244 2.25Zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77Z"/></svg>
+  </a>
+  <div class="last-updated" style="margin:0; padding:0;">最終更新：2026.05.26</div>
+</div>
 
 <div id="modal-overlay" class="modal-overlay" style="display:none;" onclick="closeModal()">
   <div class="modal-box" onclick="event.stopPropagation()">
