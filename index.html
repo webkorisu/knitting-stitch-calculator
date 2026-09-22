@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
+<!-- © 2026 YUCCHI. 無断複製・再配布禁止 -->
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="color-scheme" content="light only">
@@ -10,9 +11,12 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <title>編み物の分散計算アプリ | 分散減目・分散増目をかんたん計算 - ✿ YUCCHI ✿</title>
-<meta name="description" content="編み物の分散減目・分散増目を自動計算するアプリです。目数を均等に増やす・減らすを簡単に計算。編み図イメージ・チェックリスト付き。棒針・かぎ針対応。">
+<meta name="description" content="編み物の分散減目・分散増目を計算するアプリです。目数を均等に増やす・減らす計算をかんたんに。編み図イメージ・チェックリスト付きで棒針・かぎ針どちらにも対応。">
+<meta name="robots" content="index, follow">
 <meta property="og:title" content="編み物の分散計算アプリ | 分散減目・分散増目をかんたん計算 - ✿ YUCCHI ✿">
-<meta property="og:description" content="編み物の分散減目・分散増目を自動計算するアプリです。目数を均等に増やす・減らすを簡単に計算。編み図イメージ・チェックリスト付き。棒針・かぎ針対応。">
+<meta property="og:description" content="編み物の分散減目・分散増目を計算するアプリです。目数を均等に増やす・減らす計算をかんたんに。編み図イメージ・チェックリスト付きで棒針・かぎ針どちらにも対応。">
+<meta property="og:site_name" content="✿ YUCCHI ✿">
+<meta property="og:locale" content="ja_JP">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -120,6 +124,10 @@
     font-weight: 400;
     padding-top: 10px;
   }
+  header .brand .brand-deco {
+    font-size: 11px; /* YUCCHIの文字より大きく見えすぎないように調整 */
+    vertical-align: 1px; /* YUCCHIの文字と高さを揃える */
+  }
 
   /* ─── タブ（pill switcher） ─── */
   .tabs {
@@ -164,6 +172,7 @@
     box-shadow: 0 2px 8px rgba(217,147,158,0.35);
   }
   .panel-wrap {
+    position: relative;
     margin: 16px 20px 0;
     background: var(--surface);
     border-radius: var(--radius);
@@ -709,7 +718,6 @@
     background: #FFFFFF;
     text-decoration: none;
     transition: background .2s, border-color .2s;
-    margin-left: 1.5px;
   }
   .x-icon-btn svg { fill: #9A8A8E; }
   .x-icon-btn:hover {
@@ -717,6 +725,55 @@
     border-color: #EAE0E2;
   }
   .x-icon-btn:hover svg { fill: #9A8A8E; }
+  .x-footer-icons {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: 1.5px; /* アコーディオンのborderと左端を揃える */
+  }
+
+  /* ─── カードの右上角に固定するアイコン列（アプリ一覧・X） ─── */
+  /* .panel-wrap（position:relative）の右上角を基準にした絶対配置。
+     画面幅が変わっても常にカードの右端に揃い、右側がカードからはみ出ることはない */
+  .above-card-row {
+    position: absolute;
+    top: -38px;
+    right: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .mini-icon-btn {
+    width: 30px;
+    height: 30px;
+  }
+
+  /* ─── ホバー時のミニツールチップ（PC・マウス機種のみ） ─── */
+  @media (hover: hover) {
+    .x-icon-btn { position: relative; }
+    .x-icon-btn::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: calc(100% + 6px);
+      left: 0;
+      transform: translateY(4px);
+      background: var(--text);
+      color: #fff;
+      font-family: 'Zen Maru Gothic', sans-serif;
+      font-size: 10px;
+      letter-spacing: .04em;
+      padding: 4px 8px;
+      border-radius: 6px;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .15s, transform .15s;
+      z-index: 20;
+    }
+    .x-icon-btn:hover::after { opacity: .88; transform: translateY(0); }
+    /* 右端寄せのアイコン列は、吹き出しも右端基準にする */
+    .above-card-row .x-icon-btn::after { left: auto; right: 0; }
+  }
   @media(min-width:500px){
     .accordion-footer { margin-left: 24px; margin-right: 24px; }
     .x-footer-row { margin-left: 24px; margin-right: 24px; }
@@ -818,7 +875,7 @@
   <h1>編み物分散増減計算</h1>
   <h2>Knitting Stitch Calculator</h2>
   <div class="title-ja-sub">分散減目・分散増目をかんたん計算</div>
-  <div class="brand">✿ YUCCHI ✿</div>
+  <div class="brand"><span class="brand-deco">✿</span> YUCCHI <span class="brand-deco">✿</span></div>
   <div class="data-hint">
     データはこの端末に保存されます<br>
     詳細は ✿ データについて をご確認ください
@@ -833,6 +890,20 @@
 </div>
 
 <div class="panel-wrap">
+  <div class="above-card-row">
+    <a href="https://webkorisu.github.io/yucchis-portal/" target="_blank" rel="noopener noreferrer"
+       aria-label="✿ YUCCHIのアプリ一覧を開く" data-tooltip="アプリ一覧へ" class="x-icon-btn mini-icon-btn">
+      <svg width="17" height="17" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12.74 1.67 L22 10 L22 20.5 Q22 22 20.5 22 L14.5 22 L14.5 15 L9.5 15 L9.5 22 L3.5 22 Q2 22 2 20.5 L2 10 L11.26 1.67 Q12 1 12.74 1.67 Z"/>
+      </svg>
+    </a>
+    <a href="https://x.com/yuttyan4444" target="_blank" rel="noopener noreferrer"
+       aria-label="XでYUCCHIをフォロー" data-tooltip="Xへ" class="x-icon-btn mini-icon-btn">
+      <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.747l7.73-8.835L1.254 2.25H8.08l4.254 5.622L18.244 2.25Zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77Z"/>
+      </svg>
+    </a>
+  </div>
   <!-- 減目パネル -->
   <div id="panel-dec" class="panel active">
     <div class="note">分散減目とは、目を均等に減らす方法です。<br>こちらのツールでは元々の目数を減らす目数＋１で分割して計算しています。</div>
@@ -905,6 +976,7 @@
         <p>このアプリは、編み物や日々の暮らしをちょっと便利にするために作られた個人制作のツールです。</p>
         <p>計算結果・提案内容はすべて参考情報としてお使いください。編み物の仕上がりや作業結果はゲージ・素材・個人差によって異なります。必ずご自身でご確認のうえお使いください。</p>
         <p>作者（YUCCHI）は、アプリの内容・結果によって生じたいかなる損害についても責任を負いかねます。あらかじめご了承ください。</p>
+        <p>このアプリのコード・デザインは、作者（YUCCHI）が制作したものです。コードやデザインをそのまま複製・再配布・販売することはご遠慮ください。</p>
       </div>
     </div>
 
@@ -924,10 +996,21 @@
 </div>
 
 <div class="x-footer-row">
-  <a href="https://x.com/yuttyan4444" target="_blank" rel="noopener noreferrer" aria-label="XでYUCCHIをフォロー" class="x-icon-btn">
-    <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.747l7.73-8.835L1.254 2.25H8.08l4.254 5.622L18.244 2.25Zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77Z"/></svg>
-  </a>
-  <div class="last-updated" style="margin:0; padding:0;">最終更新：2026.05.26</div>
+  <div class="x-footer-icons">
+    <a href="https://webkorisu.github.io/yucchis-portal/" target="_blank" rel="noopener noreferrer"
+       aria-label="✿ YUCCHIのアプリ一覧を開く" data-tooltip="アプリ一覧へ" class="x-icon-btn">
+      <svg width="17" height="17" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12.74 1.67 L22 10 L22 20.5 Q22 22 20.5 22 L14.5 22 L14.5 15 L9.5 15 L9.5 22 L3.5 22 Q2 22 2 20.5 L2 10 L11.26 1.67 Q12 1 12.74 1.67 Z"/>
+      </svg>
+    </a>
+    <a href="https://x.com/yuttyan4444" target="_blank" rel="noopener noreferrer"
+       aria-label="XでYUCCHIをフォロー" data-tooltip="Xへ" class="x-icon-btn">
+      <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.747l7.73-8.835L1.254 2.25H8.08l4.254 5.622L18.244 2.25Zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77Z"/>
+      </svg>
+    </a>
+  </div>
+  <div class="last-updated" style="margin:0; padding:0;">最終更新：2026.09.23</div>
 </div>
 
 <div id="modal-overlay" class="modal-overlay" style="display:none;" onclick="closeModal()">
