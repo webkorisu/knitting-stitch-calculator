@@ -116,6 +116,9 @@
     opacity: 0.45;
     flex-shrink: 0;
   }
+  @media(min-width:500px){
+    .mobile-break{ display:none; }
+  }
   header .brand {
     font-family: 'Cormorant Garamond', serif;
     font-size: 14px;
@@ -893,7 +896,7 @@
 <header>
   <h1>編み物分散増減計算</h1>
   <h2>Knitting Stitch Calculator</h2>
-  <div class="title-ja-sub">分散減目・分散増目をかんたん計算</div>
+  <div class="title-ja-sub">分散減目・分散増目を<br class="mobile-break">かんたん計算</div>
   <div class="brand"><span class="brand-deco">✿</span> YUCCHI <span class="brand-deco">✿</span></div>
   <div class="data-hint">
     データはこの端末に保存されます<br>
