@@ -57,6 +57,47 @@
     --shadow:    0 4px 28px rgba(130,90,100,0.10);
   }
 
+  /* トップに戻るボタン（減目タブ＝ブルー／増目タブ＝ピンク、スイッチャーと連動） */
+  .top-btn{
+    position:fixed;
+    right:18px;
+    bottom:18px;
+    width:46px;
+    height:46px;
+    border-radius:50%;
+    background:var(--dec);
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-decoration:none;
+    font-family:'Zen Maru Gothic', sans-serif;
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:.02em;
+    box-shadow:0 4px 14px rgba(141,174,189,.35);
+    opacity:0;
+    visibility:hidden;
+    transform:translateY(8px);
+    transition:opacity .2s, transform .2s, visibility .2s, background .25s, box-shadow .25s;
+    z-index:50;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .top-btn.is-inc{
+    background:var(--inc);
+    box-shadow:0 4px 14px rgba(217,147,158,.35);
+  }
+  .top-btn.show{
+    opacity:1;
+    visibility:visible;
+    transform:translateY(0);
+  }
+  .top-btn:hover{ filter:brightness(.92); }
+  .top-btn:active{ transform:scale(.94); }
+  @media (prefers-reduced-motion: reduce){
+    .top-btn{ transition:opacity .2s, transform .2s, visibility .2s; }
+  }
+
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
@@ -884,7 +925,7 @@
   }
 </style>
 </head>
-<body>
+<body id="top">
 
 <!-- フローティングサマリーバッジ -->
 <div class="floating-summary" id="floating-summary">
@@ -1200,6 +1241,7 @@ function switchTab(t){
   ['dec','inc'].forEach(id=>document.getElementById('panel-'+id).classList.toggle('active',id===t));
   document.querySelectorAll('.tab-btn')[0].className='tab-btn'+(t==='dec'?' active-dec':'');
   document.querySelectorAll('.tab-btn')[1].className='tab-btn'+(t==='inc'?' active-inc':'');
+  document.getElementById('topBtn').classList.toggle('is-inc', t==='inc');
   const s = _summaryState[t];
   if (s) _showFloatingSummary(s.text, s.isInc);
   else document.getElementById('floating-summary').classList.remove('visible');
@@ -1968,6 +2010,25 @@ document.addEventListener('DOMContentLoaded',()=>{
   /* スクロールで入力欄の見え方を監視してバッジ表示を切り替え */
   window.addEventListener('scroll', _updateFloatingVisibility, { passive: true });
 });
+</script>
+
+<a href="#top" class="top-btn" id="topBtn" aria-label="ページの一番上に戻る">TOP</a>
+<script>
+  (function(){
+    var btn = document.getElementById('topBtn');
+    if (!btn) return;
+    window.addEventListener('scroll', function(){
+      if (window.scrollY > 400) {
+        btn.classList.add('show');
+      } else {
+        btn.classList.remove('show');
+      }
+    }, { passive: true });
+    btn.addEventListener('click', function(e){
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  })();
 </script>
 </body>
 </html>
