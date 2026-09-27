@@ -11,10 +11,10 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <title>編み物の分散計算アプリ | 分散減目・分散増目をかんたん計算 - ✿ YUCCHI ✿</title>
-<meta name="description" content="編み物の分散減目・分散増目を計算するアプリです。目数を均等に増やす・減らす計算をかんたんに。編み図イメージ・チェックリスト付きで棒針・かぎ針どちらにも対応。">
+<meta name="description" content="分散減目とは、目を均等に減らす方法です。元々の目数と減らした後の目数を入力するだけで分散減目の計算ができ、棒針・かぎ針どちらにも対応。編み図イメージ・チェックリスト付き。">
 <meta name="robots" content="index, follow">
 <meta property="og:title" content="編み物の分散計算アプリ | 分散減目・分散増目をかんたん計算 - ✿ YUCCHI ✿">
-<meta property="og:description" content="編み物の分散減目・分散増目を計算するアプリです。目数を均等に増やす・減らす計算をかんたんに。編み図イメージ・チェックリスト付きで棒針・かぎ針どちらにも対応。">
+<meta property="og:description" content="分散減目とは、目を均等に減らす方法です。元々の目数と減らした後の目数を入力するだけで分散減目の計算ができ、棒針・かぎ針どちらにも対応。編み図イメージ・チェックリスト付き。">
 <meta property="og:site_name" content="✿ YUCCHI ✿">
 <meta property="og:locale" content="ja_JP">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
@@ -167,6 +167,13 @@
     color: #A07080;
     font-weight: 400;
     padding-top: 10px;
+    display: inline-block;
+    text-decoration: none;
+    transition: opacity .15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  @media (hover: hover){
+    header .brand:hover{ opacity: .65; }
   }
   header .brand .brand-deco {
     font-size: 11px; /* YUCCHIの文字より大きく見えすぎないように調整 */
@@ -938,7 +945,7 @@
   <h1>編み物分散増減計算</h1>
   <h2>Knitting Stitch Calculator</h2>
   <div class="title-ja-sub">分散減目・分散増目を<br class="mobile-break">かんたん計算</div>
-  <div class="brand"><span class="brand-deco">✿</span> YUCCHI <span class="brand-deco">✿</span></div>
+  <a class="brand" href="https://webkorisu.github.io/yucchis-portal/" target="_blank" rel="noopener noreferrer" aria-label="✿ YUCCHIのアプリ一覧を開く"><span class="brand-deco">✿</span> YUCCHI <span class="brand-deco">✿</span></a>
   <div class="data-hint">
     データはこの端末に保存されます<br>
     詳細は ✿ データについて をご確認ください
@@ -1075,7 +1082,7 @@
       </svg>
     </a>
   </div>
-  <div class="last-updated" style="margin:0; padding:0;">最終更新：2026.09.27</div>
+  <div class="last-updated" style="margin:0; padding:0;">最終更新：2026.09.28</div>
 </div>
 
 <div id="modal-overlay" class="modal-overlay" style="display:none;" onclick="closeModal()">
