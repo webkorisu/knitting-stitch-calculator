@@ -21,6 +21,7 @@
 <style>
   :root {
     color-scheme: light only;
+    --brand: #A07080;
     /* ── ベース ── */
     --bg:       #FBF0F2;   /* スクショのやわらかいピンクベージュ */
     --surface:  #FFFFFF;
@@ -111,7 +112,7 @@
   /* ─── ヘッダー ─── */
   header {
     text-align: center;
-    padding: 18px 20px 20px;
+    padding: 18px 20px 12px;      /* スマホ基準。下は、データ注意書きの下の余白（12px） */
   }
   /* h1：日本語タイトル — 主役情報としてしっかり視認 */
   header h1 {
@@ -163,12 +164,12 @@
   header .brand {
     font-family: 'Cormorant Garamond', serif;
     font-size: 14px;
-    letter-spacing: .42em;
-    color: #A07080;
     font-weight: 400;
-    padding-top: 10px;
+    color: var(--brand, #A07080); /* 色だけアプリごとに変えてOK。:root で --brand を決める */
+    padding-top: 0;               /* 上の余白は、サブ説明文の margin-bottom（14px）だけで取る */
     display: inline-block;
-    text-decoration: none;
+    line-height: 1.4;
+    text-decoration: none;        /* リンクの下線を消す */
     transition: opacity .15s;
     -webkit-tap-highlight-color: transparent;
   }
@@ -176,8 +177,9 @@
     header .brand:hover{ opacity: .65; }
   }
   header .brand .brand-deco {
-    font-size: 11px; /* YUCCHIの文字より大きく見えすぎないように調整 */
-    vertical-align: 1px; /* YUCCHIの文字と高さを揃える */
+    font-size: .75em;             /* 花は文字の75%。pxにしない */
+    display: inline-block;
+    vertical-align: .05em;        /* 大文字の上下にそろう高さ */
   }
 
   /* ─── タブ（pill switcher） ─── */
@@ -761,7 +763,7 @@
   @media(min-width:680px){
     .panel-wrap { margin-left: auto; margin-right: auto; max-width: 640px; }
     .tabs { max-width: 640px; margin-left: auto; margin-right: auto; }
-    header { padding: 36px 20px 20px; }
+    header { padding: 36px 20px 12px; }
     /* PC：ボタン幅を入力欄（220px）に揃えてすっきり */
     .calc-btn { max-width: 220px; }
   }
@@ -945,11 +947,8 @@
   <h1>編み物分散増減計算</h1>
   <h2>Knitting Stitch Calculator</h2>
   <div class="title-ja-sub">分散減目・分散増目を<br class="mobile-break">かんたん計算</div>
-  <a class="brand" href="https://webkorisu.github.io/yucchis-portal/" target="_blank" rel="noopener noreferrer" aria-label="✿ YUCCHIのアプリ一覧を開く"><span class="brand-deco">✿</span> YUCCHI <span class="brand-deco">✿</span></a>
-  <div class="data-hint">
-    データはこの端末に保存されます<br>
-    詳細は ✿ データについて をご確認ください
-  </div>
+  <a class="brand" href="https://webkorisu.github.io/yucchis-portal/" target="_blank" rel="noopener noreferrer" aria-label="✿ YUCCHIのアプリ一覧を開く"><span class="brand-deco">✿</span>&nbsp;&nbsp;Y&nbsp;U&nbsp;C&nbsp;C&nbsp;H&nbsp;I&nbsp;&nbsp;<span class="brand-deco">✿</span></a>
+  <div class="data-hint">データはこの端末の中に保存されます</div>
 </header>
 
 <div class="tabs">
@@ -977,7 +976,7 @@
   <!-- 減目パネル -->
   <div id="panel-dec" class="panel active">
     <div class="note">分散減目とは、目を均等に減らす方法です。<br>こちらのツールでは元々の目数を減らす目数＋１で分割して計算しています。</div>
-    <p class="detail-link dec"><a href="https://webkorisu.github.io/decrease-increase-work/" target="_blank" rel="noopener noreferrer">✿ 分散減目の計算のしくみを詳しく見る →</a></p>
+    <p class="detail-link dec"><a href="https://webkorisu.github.io/decrease-increase-work/" target="_blank" rel="noopener noreferrer">✿ 分散減目のしくみを詳しく見る →</a></p>
     <div class="field"><label>元々の目数</label><input type="number" id="dec-from" min="4" max="999" placeholder="例: 12" inputmode="numeric"></div>
     <div class="field"><label>減らした後の目数</label><input type="number" id="dec-to" min="3" max="998" placeholder="例: 8" inputmode="numeric"></div>
     <button class="calc-btn calc-btn-dec" onclick="calcDec()">計算する</button>
@@ -1007,7 +1006,7 @@
   <!-- 増目パネル -->
   <div id="panel-inc" class="panel">
     <div class="note mint-note">分散増目とは、目を均等に増やす方法です。<br>こちらのツールでは元々の目数を増やす目数＋１で分割して計算しています。</div>
-    <p class="detail-link inc"><a href="https://webkorisu.github.io/decrease-increase-work/" target="_blank" rel="noopener noreferrer">✿ 分散増目の計算のしくみを詳しく見る →</a></p>
+    <p class="detail-link inc"><a href="https://webkorisu.github.io/decrease-increase-work/" target="_blank" rel="noopener noreferrer">✿ 分散増目のしくみを詳しく見る →</a></p>
     <div class="field mint-field"><label>元々の目数</label><input type="number" id="inc-from" min="2" max="998" placeholder="例: 8" inputmode="numeric"></div>
     <div class="field mint-field"><label>増やした後の目数</label><input type="number" id="inc-to" min="3" max="999" placeholder="例: 12" inputmode="numeric"></div>
     <button class="calc-btn calc-btn-inc" onclick="calcInc()">計算する</button>
@@ -1082,7 +1081,7 @@
       </svg>
     </a>
   </div>
-  <div class="last-updated" style="margin:0; padding:0;">最終更新：2026.09.28</div>
+  <div class="last-updated" style="margin:0; padding:0;">最終更新：2026.10.15</div>
 </div>
 
 <div id="modal-overlay" class="modal-overlay" style="display:none;" onclick="closeModal()">
